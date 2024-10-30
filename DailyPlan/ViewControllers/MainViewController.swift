@@ -15,7 +15,7 @@ class MainViewController: UITableViewController {
     private let habitCalendar = HabitCalendar.getHabitCalendarExamples()
     
     let currentDateForLabel = Date().formatted(date: .abbreviated, time: .omitted)
-    
+    //TODO: улучшить валидацию дат
     let currentYear = Int(Date().description.prefix(4))
     let currentMonth = Int(Date().description.prefix(10).suffix(5).prefix(2))
     let currentDay = Int(Date().description.prefix(10).suffix(2))
@@ -156,3 +156,5 @@ class MainViewController: UITableViewController {
             .first?.timesADateDone ?? 0)
     }
 }
+
+
