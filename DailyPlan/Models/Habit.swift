@@ -6,14 +6,23 @@
 //
 import Foundation
 
-struct Habit {
+struct Habit: Codable {
     
     let habit: String
     let duration: Int
     let timesADay: Int
     let progress: Float
+    
+    var doOnMonday: Bool //= true
+    var doOnTuesday: Bool //= true
+    var doOnWednesday: Bool //= true
+    var doOnThursday: Bool //= true
+    var doOnFriday: Bool //= true
+    var doOnSaturday: Bool //= true
+    var doOnSunday: Bool //= true
+    
     let habitDone: Bool
-    let doneImageName: String = "habitDone"
+    var doneImageName: String = "habitDone"
     //TODO: дописать id
     let id: Int
     
@@ -24,6 +33,13 @@ struct Habit {
                 duration: 3,
                 timesADay: 2,
                 progress: 10,
+                doOnMonday: false,
+                doOnTuesday: false,
+                doOnWednesday: false,
+                doOnThursday: false,
+                doOnFriday: false,
+                doOnSaturday: false,
+                doOnSunday: false,
                 habitDone: false,
                 id: 1
             ),
@@ -32,6 +48,13 @@ struct Habit {
                 duration: 90,
                 timesADay: 1,
                 progress: 1,
+                doOnMonday: false,
+                doOnTuesday: false,
+                doOnWednesday: false,
+                doOnThursday: false,
+                doOnFriday: false,
+                doOnSaturday: false,
+                doOnSunday: false,
                 habitDone: false,
                 id: 2
             ),
@@ -40,11 +63,23 @@ struct Habit {
                 duration: 120,
                 timesADay: 1,
                 progress: 70,
-                habitDone: true,
+                doOnMonday: true,
+                doOnTuesday: false,
+                doOnWednesday: false,
+                doOnThursday: false,
+                doOnFriday: false,
+                doOnSaturday: false,
+                doOnSunday: false,
+                habitDone: false,
                 id: 3
             )
         ]
     }
+    
+    private func addHabit() {}
+    private func deleteHabit() {}
+    private func markHabit() {}
+    private func changeHabit() {}
 }
 
 enum Days: String {
@@ -57,19 +92,15 @@ enum Days: String {
     case sunday    = "ВС"
 }
 
-struct HabitCalendar {
+struct HabitCalendar: Codable {
     let year: Int
     let month: Int
-    let day: Int
-//    var date: String {
-//        "\(year)-\(month)-\(day)"
-//    }
-    
+    let day: Int  
     let habitID: Int
     var habitDone: Bool = false
     var timesADateDone: Int = 0
     //TODO: дописать id
-    let id: Int = 0
+    var id: Int = 0
     
     static func getHabitCalendarExamples() -> [HabitCalendar] {
         [HabitCalendar(year: 2024,

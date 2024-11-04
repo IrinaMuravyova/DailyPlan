@@ -7,27 +7,31 @@
 
 import UIKit
 
+protocol NewHabitViewControllerDelegate: AnyObject {
+    func add(_ habit: Habit)
+}
+
 class MainViewController: UITableViewController {
     
     @IBOutlet var currentDateLabel: UILabel!
     
-    private let habits = Habit.getExampleHabitsList()
-    private let habitCalendar = HabitCalendar.getHabitCalendarExamples()
-    
+    private var habits = Habit.getExampleHabitsList()
+    private var habitCalendar = HabitCalendar.getHabitCalendarExamples()
+
     let currentDateForLabel = Date().formatted(date: .abbreviated, time: .omitted)
     //TODO: улучшить валидацию дат
     let currentYear = Int(Date().description.prefix(4))
     let currentMonth = Int(Date().description.prefix(10).suffix(5).prefix(2))
     let currentDay = Int(Date().description.prefix(10).suffix(2))
     
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        
         tableView.rowHeight = 60
         currentDateLabel.text = currentDateForLabel
-        //        print(currentYear, currentMonth, currentDay)
+//        habits = StorageManager.shared.fetchHabits()
+        //TODO: при первом запуске запустить добавление новой привычки
+        
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
         
@@ -54,6 +58,7 @@ class MainViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let habit = habits[indexPath.row]
+        //TODO: выводить только те, которые есть в календаре на указанную дату. При запуске приложения сегодня первый раз, создавать автоматически на сегодняшнюю дату
         if !habit.habitDone {
             let cell = tableView.dequeueReusableCell(withIdentifier: "habitCell", for: indexPath) as? HabitViewCell
             
@@ -121,15 +126,16 @@ class MainViewController: UITableViewController {
      }
      */
     
-    /*
+    
      // MARK: - Navigation
      
      // In a storyboard-based application, you will often want to do a little preparation before navigation
      override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+         guard let newHabitVC = segue.destination as? HabitEditViewController else { return }
+         newHabitVC.delegate = self
      // Get the new view controller using segue.destination.
      // Pass the selected object to the new view controller.
      }
-     */
     
 
 
@@ -157,4 +163,23 @@ class MainViewController: UITableViewController {
     }
 }
 
+// MARK: - NewHabitViewControllerDelegate
+extension MainViewController: NewHabitViewControllerDelegate {
+    //TODO: сделать дженерик
+    func add(_ habit: Habit) {
+        habits.append(habit) // ??
+        tableView.reloadData()
+        }
+}
 
+//MARK: - UITableViewDelegate
+extension MainViewController {
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+       
+        if editingStyle == .delete {
+            //TODO: решить вопрос с переполнением
+            StorageManager.shared.deleteHabit(at: indexPath.row)
+            tableView.deselectRow(at: indexPath, animated: true)
+        } //TODO: продумать логику чтобы удалять одну запись и записи из календаря для нее
+    }
+}
