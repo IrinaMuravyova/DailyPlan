@@ -218,15 +218,15 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="nBd-6c-MUe">
-                                        <rect key="frame" x="0.0" y="56" width="246.66666666666666" height="49.666666666666657"/>
+                                        <rect key="frame" x="0.0" y="56" width="361" height="49.666666666666657"/>
                                         <subviews>
                                             <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="ДЕЛАТЬ ЧТО-ТО" textAlignment="natural" clearsOnBeginEditing="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="77G-M3-wNI">
-                                                <rect key="frame" x="0.0" y="0.0" width="246.66666666666666" height="37.666666666666664"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="361" height="37.666666666666664"/>
                                                 <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="30"/>
-                                                <textInputTraits key="textInputTraits"/>
+                                                <textInputTraits key="textInputTraits" autocapitalizationType="allCharacters"/>
                                             </textField>
                                             <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="1" translatesAutoresizingMaskIntoConstraints="NO" id="11O-TB-icZ">
-                                                <rect key="frame" x="0.0" y="45.666666666666686" width="246.66666666666666" height="4"/>
+                                                <rect key="frame" x="0.0" y="45.666666666666686" width="361" height="4"/>
                                                 <color key="tintColor" systemColor="systemGreenColor"/>
                                             </progressView>
                                         </subviews>
@@ -237,14 +237,14 @@
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="y0b-Q9-GOF">
                                                 <rect key="frame" x="0.0" y="0.0" width="50" height="46.666666666666664"/>
                                                 <subviews>
-                                                    <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="1" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="DZh-mM-884">
+                                                    <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="1" placeholder="1" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="DZh-mM-884">
                                                         <rect key="frame" x="0.0" y="0.0" width="50" height="37.666666666666664"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="30" id="0wf-JM-GzC"/>
                                                         </constraints>
                                                         <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="30"/>
-                                                        <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
+                                                        <textInputTraits key="textInputTraits" autocapitalizationType="allCharacters" keyboardType="numberPad"/>
                                                     </textField>
                                                     <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="1" translatesAutoresizingMaskIntoConstraints="NO" id="4M2-W9-FOa">
                                                         <rect key="frame" x="0.0" y="42.666666666666629" width="50" height="4"/>
@@ -415,14 +415,14 @@
                                             <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="WIz-G6-3Sm">
                                                 <rect key="frame" x="94.666666666666671" y="0.0" width="30" height="54"/>
                                                 <subviews>
-                                                    <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="1" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="7rV-yB-e2N">
+                                                    <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="1" placeholder="1" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="7rV-yB-e2N">
                                                         <rect key="frame" x="0.0" y="0.0" width="30" height="50"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="50" id="UJb-3m-pba"/>
                                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="30" id="v75-h3-Efa"/>
                                                         </constraints>
                                                         <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="30"/>
-                                                        <textInputTraits key="textInputTraits"/>
+                                                        <textInputTraits key="textInputTraits" autocapitalizationType="allCharacters"/>
                                                     </textField>
                                                     <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="1" translatesAutoresizingMaskIntoConstraints="NO" id="xhV-eY-B3S">
                                                         <rect key="frame" x="0.0" y="50" width="30" height="4"/>
@@ -434,7 +434,7 @@
                                                 <rect key="frame" x="134.66666666666663" y="0.0" width="226.33333333333337" height="54"/>
                                                 <subviews>
                                                     <pickerView contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="msC-zT-pPv">
-                                                        <rect key="frame" x="0.0" y="0.0" width="226" height="50"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="226.33333333333334" height="50"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" relation="lessThanOrEqual" constant="50" id="AnH-ef-am1"/>
                                                         </constraints>
@@ -449,6 +449,7 @@
                                     </stackView>
                                 </subviews>
                                 <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="nBd-6c-MUe" secondAttribute="trailing" id="dQR-Uq-y3Z"/>
                                     <constraint firstAttribute="trailing" secondItem="uN6-P7-n6M" secondAttribute="trailing" id="rhf-V4-uOz"/>
                                 </constraints>
                             </stackView>
@@ -509,6 +510,7 @@
                         <outlet property="sundayButton" destination="k8v-Sx-89Q" id="Hif-MH-gW3"/>
                         <outlet property="thursdayButton" destination="HVp-LV-xaI" id="inZ-pX-nxx"/>
                         <outlet property="timesADayTextField" destination="DZh-mM-884" id="TdZ-QQ-bxA"/>
+                        <outlet property="timesDeclineLabel" destination="dPf-Ve-bj8" id="sif-XV-Yrw"/>
                         <outlet property="tuesdayButton" destination="3Ex-bu-6Gr" id="Xj5-9A-bGR"/>
                         <outlet property="wednesdayButton" destination="NJK-jQ-Hfu" id="0h4-dS-5oK"/>
                     </connections>

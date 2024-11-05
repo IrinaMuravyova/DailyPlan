@@ -7,14 +7,13 @@
 
 import UIKit
 
-class HabitEditViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource {
+class HabitEditViewController: UIViewController {
 
     @IBOutlet var habitTextField: UITextField!
     @IBOutlet var timesADayTextField: UITextField!
+    @IBOutlet var timesDeclineLabel: UILabel!
     @IBOutlet var durationCountTextField: UITextField!
     @IBOutlet var durationTypePickerView: UIPickerView!
-    @IBOutlet var durationTypeLabel: UILabel!
-    
     
     @IBOutlet var mondayButton: UIButton!
     @IBOutlet var tuesdayButton: UIButton!
@@ -24,8 +23,9 @@ class HabitEditViewController: UIViewController, UIPickerViewDelegate, UIPickerV
     @IBOutlet var saturdayButton: UIButton!
     @IBOutlet var sundayButton: UIButton!
     
-    var durationOptions = ["day", "month", "year"] //TODO: сделать склонение в зависимости от числа
-    var startDurationValue = "month"
+    var durationOptions = ["день", "месяц", "год"] //TODO: сделать склонение в зависимости от числа
+    var startDurationValue = "месяц"
+    
     
     weak var delegate: NewHabitViewControllerDelegate?
     
@@ -49,6 +49,10 @@ class HabitEditViewController: UIViewController, UIPickerViewDelegate, UIPickerV
         saturdayButton.addTarget(self, action: #selector(flagTapped), for: .touchUpInside)
         sundayButton.addTarget(self, action: #selector(flagTapped), for: .touchUpInside)
         
+        
+        updateCountDeclinedWord()
+        timesADayTextField.addTarget(self, action: #selector(updateCountDeclinedWord), for: .editingChanged)
+        
         // picker view settings
         // Установка делегатов
         durationTypePickerView.delegate = self
@@ -60,6 +64,9 @@ class HabitEditViewController: UIViewController, UIPickerViewDelegate, UIPickerV
         if let index = durationOptions.firstIndex(of: startDurationValue) {
             durationTypePickerView.selectRow(index, inComponent: 0, animated: false)
         }
+        
+        updateDurationDeclinedWords()
+        durationCountTextField.addTarget(self, action: #selector(updateDurationDeclinedWords), for:.editingChanged)
 
     }
     
@@ -127,15 +134,8 @@ class HabitEditViewController: UIViewController, UIPickerViewDelegate, UIPickerV
     private func addHabit(){
         guard let habit = habitTextField.text else { return }
         guard habitTextField.text != nil else { return }
-        
-        let durationCount = Int(durationCountTextField.text ?? "") ?? 1
-        let duration =
-            switch durationCountTextField.text ?? "" {
-            case "день", "дней", "дня" : durationCount
-            case "месяц", "месяцев", "месяца" : durationCount * 30
-            case "год" : durationCount * 365
-            default : 1
-            }
+
+        let duration = countSelectedDaysInPeriod()
 
         let newHabit = Habit(
             habit: habit,
@@ -156,36 +156,187 @@ class HabitEditViewController: UIViewController, UIPickerViewDelegate, UIPickerV
         delegate?.add(newHabit)
         navigationController?.popViewController(animated: true)
     }
-    
+
+    func countSelectedDaysInPeriod() -> Int {
+        
+        let currentDate = Date() //TODO: подумать, возможно, хочу заменить на выбранную дату
+        let calendar = Calendar.current
+        
+        // Нахожу дату, которая будет через указанный период от текущей
+        let period =
+            switch getSelectedPickerViewValue() {
+            case 1: Calendar.Component.month
+            case 2: Calendar.Component.year
+            default: Calendar.Component.day
+            }
+        let durationCount = Int(durationCountTextField.text ?? "") ?? 1
+        
+        guard let periodLater = calendar.date(byAdding: period, value: durationCount, to: currentDate) else {
+            return 0
+        }
+        
+        // Нахожу начальную и конечную даты периода
+        let startOfPeriod = calendar.startOfDay(for: currentDate) // Начало текущего дня
+        let endOfPeriod = calendar.startOfDay(for: periodLater) // Начало дня через два месяца
+        
+        var count = 0
+        var currentDateToCheck = startOfPeriod
+        
+        var selectedWeekdays: [Int] = []
+        let dayButtons = [mondayButton, tuesdayButton, wednesdayButton, thursdayButton, fridayButton, saturdayButton, sundayButton]
+        for button in dayButtons {
+            if buttonIsOn(button!) {
+                switch button {
+                case mondayButton: selectedWeekdays.append(2)
+                case tuesdayButton: selectedWeekdays.append(3)
+                case wednesdayButton: selectedWeekdays.append(4)
+                case thursdayButton: selectedWeekdays.append(5)
+                case fridayButton: selectedWeekdays.append(6)
+                case saturdayButton: selectedWeekdays.append(7)
+                case sundayButton: selectedWeekdays.append(8)
+                default:
+                    print() //TODO: обработать или убрать
+                }
+            }
+        }
+        // Прохожу через все дни в периоде
+        while currentDateToCheck <= endOfPeriod {
+            // Проверяю, выбирал ли пользователь этот день
+            if selectedWeekdays.contains(calendar.component(.weekday, from: currentDateToCheck)) {
+                count += 1
+            }
+            
+            // Перехожу к следующему дню
+            if let nextDay = calendar.date(byAdding: .day, value: 1, to: currentDateToCheck) {
+                currentDateToCheck = nextDay
+            }
+        }
+        
+        return count
+    }
+
+}
+
+//MARK: UIPickerView Methods
+extension HabitEditViewController: UIPickerViewDelegate, UIPickerViewDataSource {
+    //TODO: поменять шрифт у значения
+    //TODO: скачет цифра
     // MARK: - UIPickerView Data Source Methods
 
-        func numberOfComponents(in pickerView: UIPickerView) -> Int {
-            return 1 // Один компонент для простого списка
-        }
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1 // Один компонент для простого списка
+    }
 
-        func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-            return durationOptions.count // Количество строк в списке
-        }
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return durationOptions.count // Количество строк в списке
+    }
 
-        // MARK: - UIPickerView Delegate Methods
+    // MARK: - UIPickerView Delegate Methods
 
-        func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-            return durationOptions[row] // Текст для каждого элемента
-        }
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return durationOptions[row] // Текст для каждого элемента
+    }
 
-        func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-            // Обновление метки при выборе нового значения
-            if component == 0 {
-                    let selectedValue = durationOptions[row]
-                    print("Selected: \(selectedValue)")
-                }
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        // Обновление метки при выборе нового значения
+        if component == 0 {
+                let selectedValue = durationOptions[row]
+                print("Selected: \(selectedValue)")
+            }
+    }
+
+    func pickerView(_ pickerView: UIPickerView, attributedTitleForRow row: Int, forComponent component: Int) -> NSAttributedString? {
+            let attributes: [NSAttributedString.Key: Any] = [
+//                    .font: UIFont.isEqual(durationCountTextField.text)
+                .font: UIFont.boldSystemFont(ofSize: 30), // Жирный шрифт
+                .foregroundColor: UIColor.black           // Цвет текста
+            ]
+            return NSAttributedString(string: durationOptions[row], attributes: attributes)
         }
     
-    func getSelectedValue() {
+    func getSelectedPickerViewValue() -> Int {
             // Получение выбранного значения из первого компонента
-            let selectedRow = durationTypePickerView.selectedRow(inComponent: 0) // Используйте 0
-            let selectedValue = durationOptions[selectedRow]
-            print("Currently selected value: \(selectedValue)")
+        durationTypePickerView.selectedRow(inComponent: 0)
+//            let selectedRow = durationTypePickerView.selectedRow(inComponent: 0) // Используйте 0
+//            let selectedValue = durationOptions[selectedRow]
+//            print("Currently selected value: \(selectedValue)")
         }
 }
 
+// MARK: Get declined words
+extension HabitEditViewController {
+    private func getDeclinedDayWord(for number: Int) -> String {
+        let lastDigit = number % 10
+        let lastTwoDigits = number % 100
+        
+        if lastDigit == 1 && lastTwoDigits != 11 {
+            return "день"
+        } else if (lastDigit == 2 || lastDigit == 3 || lastDigit == 4) && !(lastTwoDigits >= 11 && lastTwoDigits <= 14) {
+            return "дня"
+        } else {
+            return "дней"
+        }
+    }
+    
+    private func getDeclinedYearWord(for number: Int) -> String {
+        let lastDigit = number % 10
+        let lastTwoDigits = number % 100
+        
+        if lastDigit == 1 && lastTwoDigits != 11 {
+            return "год"
+        } else if (lastDigit == 2 || lastDigit == 3 || lastDigit == 4) && !(lastTwoDigits >= 11 && lastTwoDigits <= 14) {
+            return "года"
+        } else {
+            return "лет"
+        }
+    }
+    
+    private func getDeclinedMonthWord(for number: Int) -> String {
+        let lastDigit = number % 10
+        let lastTwoDigits = number % 100
+        
+        if lastDigit == 1 && lastTwoDigits != 11 {
+            return "месяц"
+        } else if (lastDigit == 2 || lastDigit == 3 || lastDigit == 4) && !(lastTwoDigits >= 11 && lastTwoDigits <= 14) {
+            return "месяца"
+        } else {
+            return "месяцев"
+        }
+    }
+    
+    @objc private func updateDurationDeclinedWords() {
+        let count = Int(durationCountTextField.text ?? "1") ?? 1
+        let day = getDeclinedDayWord(for: count).uppercased()
+        let month = getDeclinedMonthWord(for: count).uppercased()
+        let year = getDeclinedYearWord(for: count).uppercased()
+        durationOptions = [day, month, year]
+        durationTypePickerView.reloadComponent(0)
+        
+    }
+    
+    private func getDeclinedTimesWord(for number: Int) -> String {
+        let lastDigit = number % 10
+        let lastTwoDigits = number % 100
+        
+        if lastDigit == 1 && lastTwoDigits != 11 {
+            return "раз"
+        } else if (lastDigit == 2 || lastDigit == 3 || lastDigit == 4) && !(lastTwoDigits >= 11 && lastTwoDigits <= 14) {
+            return "раза"
+        } else {
+            return "раз"
+        }
+    }
+    
+    @objc private func updateCountDeclinedWord() {
+        let count = Int(timesADayTextField.text ?? "1") ?? 1
+        timesDeclineLabel.text = " \(getDeclinedTimesWord(for: count)) в день".uppercased()
+        timesDeclineLabel.reloadInputViews()
+//        timesADayTextField.font?.withSize(30)
+        timesADayTextField.font?.isEqual(timesDeclineLabel.text)
+        //TODO: скачет цифра
+    }
+}
+
+//TODO: при добавлении привычки создавать записать в календаре на тек день
+//TODO: кнопку покрасивее
+//TODO: кнопку возврата

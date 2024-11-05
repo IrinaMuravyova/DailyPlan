@@ -168,6 +168,7 @@ extension MainViewController: NewHabitViewControllerDelegate {
     //TODO: сделать дженерик
     func add(_ habit: Habit) {
         habits.append(habit) // ??
+        print(habits)
         tableView.reloadData()
         }
 }
