@@ -16,20 +16,28 @@ class MainViewController: UITableViewController {
     @IBOutlet var currentDateLabel: UILabel!
     
     private var habits = Habit.getExampleHabitsList()
-    private var habitCalendar = HabitCalendar.getHabitCalendarExamples()
+//    private var habitCalendar = HabitCalendar.getHabitCalendarExamples()
 
-    let currentDateForLabel = Date().formatted(date: .abbreviated, time: .omitted)
-    //TODO: улучшить валидацию дат
-    let currentYear = Int(Date().description.prefix(4))
-    let currentMonth = Int(Date().description.prefix(10).suffix(5).prefix(2))
-    let currentDay = Int(Date().description.prefix(10).suffix(2))
+    var selectedDate: Date = Calendar.current.startOfDay(for: Date())
+    var currentDateForLabel: String = ""
+    var currentYear: Int = 0
+    var currentMonth: Int = 0
+    var currentDay: Int  = 0
     
 
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.rowHeight = 60
+        
+        currentDateForLabel = self.selectedDate.formatted(date: .abbreviated, time: .omitted)
         currentDateLabel.text = currentDateForLabel
+        
+        currentYear =  Calendar.current.component(.year, from: selectedDate)
+        currentMonth = Calendar.current.component(.month, from: selectedDate)
+        currentDay = Calendar.current.component(.day, from: selectedDate)
 //        habits = StorageManager.shared.fetchHabits()
+        
+        
         //TODO: при первом запуске запустить добавление новой привычки
         
         // Uncomment the following line to preserve selection between presentations
@@ -47,9 +55,28 @@ class MainViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        return habits.count
+//        let habitsForSelectedDate = habits.filter { $0.isHabitDue(on: selectedDate) }
+        let habitsForSelectedDate = habits.filter { $0.isHabitDue(on: selectedDate) }
+        print(habitsForSelectedDate)
+        return habitsForSelectedDate.count
+        
+//        return habits.count
     }
+    
+//    private func convertToDate(from dateString: String) -> Date {
+//        
+//        let dateFormatter = DateFormatter()
+//
+//        // Устанавливаем формат, соответствующий формату строки
+//        dateFormatter.dateFormat = "dd-MM"
+//
+//        // Преобразуем строку в дату
+//        if let date = dateFormatter.date(from: dateString) {
+//            print("Дата: \(date)")
+//        } else {
+//            print("Не удалось преобразовать строку в дату")
+//        }
+//    }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return "ПРИВЫЧКИ"
@@ -66,11 +93,11 @@ class MainViewController: UITableViewController {
             cell?.habitLabel.text = habit.habit
             
             
-            cell?.leftTimesADayLabel.text = String(leftTimeADate(for: habit, in: habitCalendar))
+            cell?.leftTimesADayLabel.text = "" //String(leftTimeADate(for: habit, in: habitCalendar))
             
-            cell?.progress.progress = (Float(habitCalendar.filter({
-                $0.habitID == habit.id && $0.habitDone
-            }).count) / Float(habit.duration))
+            cell?.progress.progress = 0.7 //(Float(habitCalendar.filter({
+//                $0.habitID == habit.id && $0.habitDone
+//            }).count) / Float(habit.duration))
             
             cell?.contentConfiguration = content
             return cell!
@@ -104,25 +131,26 @@ class MainViewController: UITableViewController {
 
     
     //TODO: улучшить валидацию дат
-    private func leftTimeADate(for habit: Habit, in habitCalendar: [HabitCalendar]) -> Int {
-        habit.timesADay - (habitCalendar.filter({
-            $0.year == Int(currentYear ?? 2000)
-            && $0.month == Int(currentMonth ?? 1)
-            && $0.day == Int(currentDay ?? 1)
-            && $0.habitID == habit.id
-        })
-            .first?.timesADateDone ?? 0)
-    }
+//    private func leftTimeADate(for habit: Habit, in habitCalendar: [HabitCalendar]) -> Int {
+//        habit.timesADay - (habitCalendar.filter({
+//            $0.year == currentYear
+//            && $0.month == currentMonth
+//            && $0.day == currentDay
+//            && $0.habitID == habit.id
+//        })
+//            .first?.timesADateDone ?? 0)
+//    }
     
     //TODO: улучшить валидацию дат
     private func leftDaysToDo(_ habit: Habit) -> Int {
-        habit.duration - (habitCalendar.filter({
-            $0.year == Int(currentYear ?? 2000)
-            && $0.month == Int(currentMonth ?? 1)
-            && $0.day == Int(currentDay ?? 1)
-            && $0.habitID == habit.id
-        })
-            .first?.timesADateDone ?? 0)
+//        habit.duration - (habitCalendar.filter({
+//            $0.year == currentYear
+//            && $0.month == currentMonth
+//            && $0.day == currentDay
+//            && $0.habitID == habit.id
+//        })
+//            .first?.timesADateDone ?? 0)
+        6
     }
 }
 
@@ -136,7 +164,7 @@ extension MainViewController: NewHabitViewControllerDelegate {
         }
 }
 
-//MARK: - UITableViewDelegate
+// MARK: - UITableViewDelegate
 extension MainViewController {
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
        
@@ -145,5 +173,25 @@ extension MainViewController {
             StorageManager.shared.deleteHabit(at: indexPath.row)
             tableView.deselectRow(at: indexPath, animated: true)
         } //TODO: продумать логику чтобы удалять одну запись и записи из календаря для нее
+    }
+}
+
+// MARK: - работа с привычками
+extension MainViewController {
+    // Функция для фильтрации задач по дате
+    func habits(for date: Date) -> [Habit] {
+        return habits.filter { $0.isHabitDue(on: date) }
+    }
+    
+    // Функция для обновления статуса выполнения задачи на определенную дату
+//    func updateHabitStatus(habit: Habit, date: Date, status: HabitStatus) {
+//        guard let index = habits.firstIndex(where: { $0.habit == habit.habit }) else { return }
+//        habits[index].addCompletionRecord(on: date, status: status)
+//    }
+    
+    // Пример функции для обновления статуса задачи (вызывается по кнопке, например)
+    func completeHait(_ habit: Habit, on date: Date) {
+//        updateHabitStatus(habit: Habit, date: date, status: .completed)
+//        tableView.reloadData()
     }
 }

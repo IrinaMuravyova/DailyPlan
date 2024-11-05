@@ -112,6 +112,8 @@ class HabitEditViewController: UIViewController {
                 cancelButton.layer.masksToBounds = true
                 hasRoundedCorners = true
             }
+        
+        timesADayTextField.font = UIFont.boldSystemFont(ofSize: 30)
     }
     
     @IBAction func savingHabit(_ sender: UIButton) {
@@ -182,6 +184,7 @@ class HabitEditViewController: UIViewController {
             habitDone: false,
             startDate: Calendar.current.startOfDay(for: Date()), //TODO: подумать, возможно, заменить на указанную дату
             endDate: getEndDateOfPeriod(),
+//            completionHistory: [],
             id: 4) //TODO: дописать логику с id
         
         
@@ -265,6 +268,7 @@ class HabitEditViewController: UIViewController {
         return count
     }
 
+    
 }
 
 //MARK: UIPickerView Methods
@@ -381,6 +385,5 @@ extension HabitEditViewController {
         timesDeclineLabel.text = " \(getDeclinedTimesWord(for: count)) в день".uppercased()
         timesDeclineLabel.reloadInputViews()
 //        timesADayTextField.font = UIFont.systemFont(ofSize: 30)
-        timesADayTextField.font = UIFont.boldSystemFont(ofSize: 30)
     }
 }

@@ -13,7 +13,7 @@ class StorageManager {
     
     private var defaults = UserDefaults.standard
     private let habitsKey = "habits"
-    private let habitsCalendarKey = "habitCalendar"
+//    private let habitsCalendarKey = "habitCalendar"
     
     private init() {}
     
@@ -35,22 +35,22 @@ class StorageManager {
         guard let data = try? encoder.encode(habits) else { return }
         defaults.set(data, forKey: habitsKey)
         
-        var habitsCalendar = fetchHabitsCalendar()
-        habitsCalendar.append(HabitCalendar(
-            year: Int(Date().description.prefix(4))!,
-            month: Int(Date().description.prefix(10).suffix(5).prefix(2))!,
-            day: Int(Date().description.prefix(10).suffix(2))!,
-            habitID: habit.id))
-        guard let data = try? encoder.encode(habitsCalendar) else { return }
-        defaults.set(data, forKey: habitsCalendarKey)
+//        var habitsCalendar = fetchHabitsCalendar()
+//        habitsCalendar.append(HabitCalendar(
+//            year: Int(Date().description.prefix(4))!,
+//            month: Int(Date().description.prefix(10).suffix(5).prefix(2))!,
+//            day: Int(Date().description.prefix(10).suffix(2))!,
+//            habitID: habit.id))
+//        guard let data = try? encoder.encode(habitsCalendar) else { return }
+//        defaults.set(data, forKey: habitsCalendarKey)
     }
     
         func deleteHabit(at index: Int ){
             var habits = fetchHabits()
             let removedHabit = habits.remove(at: index)
             
-            var habitsCalendar = fetchHabitsCalendar()
-            habitsCalendar.removeAll(where: {$0.habitID == removedHabit.id})
+//            var habitsCalendar = fetchHabitsCalendar()
+//            habitsCalendar.removeAll(where: {$0.habitID == removedHabit.id})
             
             let encoder = JSONEncoder()
             // Устанавливаю стратегию кодирования для дат (ISO 8601)
@@ -59,8 +59,8 @@ class StorageManager {
             guard let data = try? encoder.encode(habits) else { return }
             defaults.set(data, forKey: habitsKey)
 
-            guard let data = try? encoder.encode(habitsCalendar) else { return }
-            defaults.set(data, forKey: habitsCalendarKey)
+//            guard let data = try? encoder.encode(habitsCalendar) else { return }
+//            defaults.set(data, forKey: habitsCalendarKey)
     }
     
     
@@ -69,13 +69,13 @@ class StorageManager {
     }
     
     
-    func fetchHabitsCalendar() -> [HabitCalendar] {
-        guard let data = defaults.data(forKey: habitsCalendarKey) else {
-            return [] }
-        let decoder = JSONDecoder()
-        // Устанавливаю стратегию декодирования для дат в формате ISO 8601
-        decoder.dateDecodingStrategy = .iso8601
-        guard let habitCalendar = try? decoder.decode([HabitCalendar].self, from: data) else {return [] }
-        return habitCalendar
-    }
+//    func fetchHabitsCalendar() -> [HabitCalendar] {
+//        guard let data = defaults.data(forKey: habitsCalendarKey) else {
+//            return [] }
+//        let decoder = JSONDecoder()
+//        // Устанавливаю стратегию декодирования для дат в формате ISO 8601
+//        decoder.dateDecodingStrategy = .iso8601
+//        guard let habitCalendar = try? decoder.decode([HabitCalendar].self, from: data) else {return [] }
+//        return habitCalendar
+//    }
 }
