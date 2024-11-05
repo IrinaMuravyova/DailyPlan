@@ -22,6 +22,9 @@ class HabitEditViewController: UIViewController {
     @IBOutlet var fridayButton: UIButton!
     @IBOutlet var saturdayButton: UIButton!
     @IBOutlet var sundayButton: UIButton!
+
+    @IBOutlet var addHabitButton: UIButton!
+    @IBOutlet var cancelButton: UIButton!
     
     var durationOptions = ["день", "месяц", "год"] //TODO: сделать склонение в зависимости от числа
     var startDurationValue = "месяц"
@@ -81,8 +84,35 @@ class HabitEditViewController: UIViewController {
         fridayButton.layer.cornerRadius = fridayButton.frame.size.width / 2
         saturdayButton.layer.cornerRadius = saturdayButton.frame.size.width / 2
         sundayButton.layer.cornerRadius = sundayButton.frame.size.width / 2
+    
+
+        addHabitButton.translatesAutoresizingMaskIntoConstraints = false
+        cancelButton.translatesAutoresizingMaskIntoConstraints = false
         
-        }
+        NSLayoutConstraint.activate([
+            addHabitButton.heightAnchor.constraint(equalToConstant: 50), // Устанавливаем высоту кнопки
+            
+            cancelButton.heightAnchor.constraint(equalTo: addHabitButton.heightAnchor),
+            cancelButton.widthAnchor.constraint(equalTo: cancelButton.heightAnchor)
+        ])
+
+        addHabitButton.titleLabel?.font = UIFont.systemFont(ofSize: 22)
+        addHabitButton.titleLabel?.adjustsFontSizeToFitWidth = true
+        addHabitButton.titleLabel?.minimumScaleFactor = 0.5
+        
+        cancelButton.titleLabel?.text = "ᐸ"
+        cancelButton.titleLabel?.textColor = .white
+        
+        var hasRoundedCorners = false
+        // Устанавливаем угол только один раз
+            if !hasRoundedCorners {
+                addHabitButton.layer.cornerRadius = addHabitButton.frame.size.height / 2
+                cancelButton.layer.cornerRadius = cancelButton.frame.size.height / 2
+                addHabitButton.layer.masksToBounds = true
+                cancelButton.layer.masksToBounds = true
+                hasRoundedCorners = true
+            }
+    }
     
     @IBAction func savingHabit(_ sender: UIButton) {
         addHabit()
@@ -90,7 +120,7 @@ class HabitEditViewController: UIViewController {
     
     
     @IBAction func cancelAddingHabit(_ sender: UIButton) {
-        dismiss(animated: true)
+        self.navigationController?.popViewController(animated: true)
     }
 
     
@@ -133,7 +163,7 @@ class HabitEditViewController: UIViewController {
     
     private func addHabit(){
         guard let habit = habitTextField.text else { return }
-        guard habitTextField.text != nil else { return }
+        guard !habit.isEmpty else { return } //TODO: добавить алерт, если пытаются сохранить без текста привычки
 
         let duration = countSelectedDaysInPeriod()
 
@@ -150,11 +180,32 @@ class HabitEditViewController: UIViewController {
             doOnSaturday: buttonIsOn(saturdayButton),
             doOnSunday: buttonIsOn(sundayButton),
             habitDone: false,
+            startDate: Calendar.current.startOfDay(for: Date()), //TODO: подумать, возможно, заменить на указанную дату
+            endDate: getEndDateOfPeriod(),
             id: 4) //TODO: дописать логику с id
+        
         
         StorageManager.shared.save(habit: newHabit)
         delegate?.add(newHabit)
         navigationController?.popViewController(animated: true)
+    }
+    
+    func getEndDateOfPeriod() -> Date {
+        let currentDate = Date() //TODO: подумать, возможно, хочу заменить на выбранную дату
+        let calendar = Calendar.current
+        let period =
+            switch getSelectedPickerViewValue() {
+            case 1: Calendar.Component.month
+            case 2: Calendar.Component.year
+            default: Calendar.Component.day
+            }
+        let durationCount = Int(durationCountTextField.text ?? "") ?? 1
+        
+        guard let periodLater = calendar.date(byAdding: period, value: durationCount, to: currentDate) else {
+            return Calendar.current.startOfDay(for: Date())
+        }
+        let endOfPeriod = calendar.startOfDay(for: periodLater) // Начало дня через два месяца
+        return endOfPeriod
     }
 
     func countSelectedDaysInPeriod() -> Int {
@@ -211,7 +262,6 @@ class HabitEditViewController: UIViewController {
                 currentDateToCheck = nextDay
             }
         }
-        
         return count
     }
 
@@ -247,8 +297,7 @@ extension HabitEditViewController: UIPickerViewDelegate, UIPickerViewDataSource 
 
     func pickerView(_ pickerView: UIPickerView, attributedTitleForRow row: Int, forComponent component: Int) -> NSAttributedString? {
             let attributes: [NSAttributedString.Key: Any] = [
-//                    .font: UIFont.isEqual(durationCountTextField.text)
-                .font: UIFont.boldSystemFont(ofSize: 30), // Жирный шрифт
+                .font: UIFont.systemFont(ofSize: 30),
                 .foregroundColor: UIColor.black           // Цвет текста
             ]
             return NSAttributedString(string: durationOptions[row], attributes: attributes)
@@ -331,12 +380,7 @@ extension HabitEditViewController {
         let count = Int(timesADayTextField.text ?? "1") ?? 1
         timesDeclineLabel.text = " \(getDeclinedTimesWord(for: count)) в день".uppercased()
         timesDeclineLabel.reloadInputViews()
-//        timesADayTextField.font?.withSize(30)
-        timesADayTextField.font?.isEqual(timesDeclineLabel.text)
-        //TODO: скачет цифра
+//        timesADayTextField.font = UIFont.systemFont(ofSize: 30)
+        timesADayTextField.font = UIFont.boldSystemFont(ofSize: 30)
     }
 }
-
-//TODO: при добавлении привычки создавать записать в календаре на тек день
-//TODO: кнопку покрасивее
-//TODO: кнопку возврата

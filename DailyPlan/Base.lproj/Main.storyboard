@@ -454,10 +454,10 @@
                                 </constraints>
                             </stackView>
                             <stackView opaque="NO" contentMode="scaleToFill" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="R7d-Am-fhr">
-                                <rect key="frame" x="16" y="763.66666666666663" width="361" height="34.333333333333371"/>
+                                <rect key="frame" x="16" y="757" width="361" height="41"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lYN-bt-NBI">
-                                        <rect key="frame" x="0.0" y="0.0" width="301.33333333333331" height="34.333333333333336"/>
+                                    <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lYN-bt-NBI">
+                                        <rect key="frame" x="0.0" y="0.0" width="321" height="41"/>
                                         <color key="backgroundColor" systemColor="systemGreenColor"/>
                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
                                         <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
@@ -473,14 +473,13 @@
                                             <action selector="savingHabit:" destination="Ry2-dE-RT2" eventType="touchUpInside" id="ss2-Lv-Ocs"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" role="cancel" translatesAutoresizingMaskIntoConstraints="NO" id="GJN-z7-lER">
-                                        <rect key="frame" x="311.33333333333331" y="0.0" width="49.666666666666686" height="34.333333333333336"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" secondItem="GJN-z7-lER" secondAttribute="height" multiplier="49:34" id="vtP-6I-9MO"/>
-                                        </constraints>
-                                        <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <state key="normal" title="Button"/>
-                                        <buttonConfiguration key="configuration" style="plain" image="chevron.backward.circle.fill" catalog="system"/>
+                                    <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" role="cancel" translatesAutoresizingMaskIntoConstraints="NO" id="GJN-z7-lER">
+                                        <rect key="frame" x="331" y="0.0" width="30" height="41"/>
+                                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <fontDescription key="fontDescription" type="system" weight="black" pointSize="24"/>
+                                        <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                        <state key="normal" title="ᐸ"/>
                                         <connections>
                                             <action selector="cancelAddingHabit:" destination="Ry2-dE-RT2" eventType="touchUpInside" id="uek-Dl-scR"/>
                                         </connections>
@@ -501,6 +500,8 @@
                     </view>
                     <navigationItem key="navigationItem" id="DsK-pF-Sj6"/>
                     <connections>
+                        <outlet property="addHabitButton" destination="lYN-bt-NBI" id="kWA-uU-Bqo"/>
+                        <outlet property="cancelButton" destination="GJN-z7-lER" id="kkD-Xd-r26"/>
                         <outlet property="durationCountTextField" destination="7rV-yB-e2N" id="GDe-e2-G3H"/>
                         <outlet property="durationTypePickerView" destination="msC-zT-pPv" id="NcJ-bz-9za"/>
                         <outlet property="fridayButton" destination="Nxv-dL-kCc" id="xYr-qW-btB"/>
@@ -537,7 +538,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="chevron.backward.circle.fill" catalog="system" width="128" height="123"/>
         <image name="habitDone" width="492" height="488"/>
         <image name="line.3.horizontal.circle.fill" catalog="system" width="128" height="123"/>
         <image name="plus.circle.fill" catalog="system" width="128" height="123"/>

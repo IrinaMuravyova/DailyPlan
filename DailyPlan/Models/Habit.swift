@@ -23,6 +23,11 @@ struct Habit: Codable {
     
     let habitDone: Bool
     var doneImageName: String = "habitDone"
+    
+    let startDate: Date
+    let endDate: Date
+//    var completionHistory: [HabitCompletionRecord] = [] // история выполнения
+    
     //TODO: дописать id
     let id: Int
     
@@ -41,6 +46,8 @@ struct Habit: Codable {
                 doOnSaturday: false,
                 doOnSunday: false,
                 habitDone: false,
+                startDate: Calendar.current.startOfDay(for: Date()),
+                endDate: Calendar.current.startOfDay(for: Date()) + 5,
                 id: 1
             ),
             Habit(
@@ -56,6 +63,8 @@ struct Habit: Codable {
                 doOnSaturday: false,
                 doOnSunday: false,
                 habitDone: false,
+                startDate: Calendar.current.startOfDay(for: Date()) - 1,
+                endDate: Calendar.current.startOfDay(for: Date()) + 3,
                 id: 2
             ),
             Habit(
@@ -71,15 +80,30 @@ struct Habit: Codable {
                 doOnSaturday: false,
                 doOnSunday: false,
                 habitDone: false,
+                startDate: Calendar.current.startOfDay(for: Date()),
+                endDate: Calendar.current.startOfDay(for: Date()) + 4,
                 id: 3
             )
         ]
+        
+        
     }
     
     private func addHabit() {}
     private func deleteHabit() {}
     private func markHabit() {}
     private func changeHabit() {}
+    
+    // Функция для добавления записи выполнения привычки на определенную дату
+//    mutating func addCompletionRecord(on date: Date, status: HabitStatus) {
+//        let record = HabitCompletionRecord(date: date, status: status)
+//        completionHistory.append(record)
+//    }
+    
+    // Получение статуса выполнения для определенной даты
+//    func statusForDate(_ date: Date) -> HabitStatus? {
+//        return completionHistory.first { Calendar.current.isDate($0.date, inSameDayAs: date) }?.status
+//    }
 }
 
 enum Days: String {
@@ -91,6 +115,20 @@ enum Days: String {
     case saturday  = "СБ"
     case sunday    = "ВС"
 }
+
+// Перечисление для статуса выполнения привычки на определенную дату
+enum HabitStatus {
+    case created
+    case completed
+    case paused
+    case missed
+}
+
+// Структура записи выполнения привычки
+//struct HabitCompletionRecord: Codable {
+//    let date: Date
+//    let status: HabitStatus
+//}
 
 struct HabitCalendar: Codable {
     let year: Int
