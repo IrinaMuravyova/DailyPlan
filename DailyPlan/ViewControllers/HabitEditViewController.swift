@@ -169,7 +169,7 @@ class HabitEditViewController: UIViewController {
 
         let duration = countSelectedDaysInPeriod()
 
-        let newHabit = Habit(
+        var newHabit = Habit(
             habit: habit,
             duration: duration,
             timesADay: Int(timesADayTextField.text ?? "") ?? 1,
@@ -182,11 +182,12 @@ class HabitEditViewController: UIViewController {
             doOnSaturday: buttonIsOn(saturdayButton),
             doOnSunday: buttonIsOn(sundayButton),
             habitDone: false,
-            startDate: Calendar.current.startOfDay(for: Date()), //TODO: подумать, возможно, заменить на указанную дату
+            startDate: Calendar.current.startOfDay(for: Date()),
             endDate: getEndDateOfPeriod(),
-//            completionHistory: [],
+            completionHistory: [],
             id: 4) //TODO: дописать логику с id
         
+        newHabit.completionHistory = createTodayCompletionRecord()
         
         StorageManager.shared.save(habit: newHabit)
         delegate?.add(newHabit)
@@ -194,7 +195,7 @@ class HabitEditViewController: UIViewController {
     }
     
     func getEndDateOfPeriod() -> Date {
-        let currentDate = Date() //TODO: подумать, возможно, хочу заменить на выбранную дату
+        let currentDate = Date()
         let calendar = Calendar.current
         let period =
             switch getSelectedPickerViewValue() {
@@ -213,7 +214,7 @@ class HabitEditViewController: UIViewController {
 
     func countSelectedDaysInPeriod() -> Int {
         
-        let currentDate = Date() //TODO: подумать, возможно, хочу заменить на выбранную дату
+        let currentDate = Date() 
         let calendar = Calendar.current
         
         // Нахожу дату, которая будет через указанный период от текущей
@@ -267,8 +268,41 @@ class HabitEditViewController: UIViewController {
         }
         return count
     }
-
     
+    private func createTodayCompletionRecord() -> [HabitCompletionRecord] {
+        let calendar = Calendar.current
+        
+        var selectedWeekdays: [Int] = []
+        let dayButtons = [mondayButton, tuesdayButton, wednesdayButton, thursdayButton, fridayButton, saturdayButton, sundayButton]
+        for button in dayButtons {
+            if buttonIsOn(button!) {
+                switch button {
+                case mondayButton: selectedWeekdays.append(2)
+                case tuesdayButton: selectedWeekdays.append(3)
+                case wednesdayButton: selectedWeekdays.append(4)
+                case thursdayButton: selectedWeekdays.append(5)
+                case fridayButton: selectedWeekdays.append(6)
+                case saturdayButton: selectedWeekdays.append(7)
+                case sundayButton: selectedWeekdays.append(8)
+                default:
+                    print() //TODO: обработать или убрать
+                }
+            }
+        }
+        
+        let completionRecord =
+        Date() >= calendar.startOfDay(for: Date()) && Date() <= getEndDateOfPeriod()
+        && selectedWeekdays.contains(calendar.component(.weekday, from: Date()))
+        ? [HabitCompletionRecord(date: Date(), status: .created)]
+        : []
+        
+        return completionRecord
+    }
+    
+    //TODO: дописать (подгружать, очищать, добавлять, отправлять в хранилище
+//    private func addTodayCompletionRecord() -> HabitCompletionRecord {
+//        
+//    }
 }
 
 //MARK: UIPickerView Methods
