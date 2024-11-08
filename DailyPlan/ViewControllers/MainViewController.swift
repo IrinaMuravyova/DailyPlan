@@ -140,7 +140,10 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
             tableView.rowHeight = 60
         
             let habitsForSelectedDate = data[sectionKey] as? [Habit] ?? [] //TODO: добавить обработчик ошибки
-                items = habitsForSelectedDate.filter{ $0.isHabitDue(on: selectedDate)}
+            items = habitsForSelectedDate.filter({$0.completionHistory.contains { record in
+                dateComponents(from: record.date ) == dateComponents(from: selectedDate)
+            }
+            })
             
         case 1: 
             items = data[sectionKey] as? [String] ?? []
@@ -162,10 +165,22 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         
         switch indexPath.section {
         case 0: // строки с привычками
-            let items = data[sectionKey] as? [Habit] ?? [] //TODO: добавить обработчик ошибки
+            var items = data[sectionKey] as? [Habit] ?? [] //TODO: добавить обработчик ошибки
+            items = items.filter({$0.completionHistory.contains { record in
+                dateComponents(from: record.date ) == dateComponents(from: selectedDate)
+            }
+            })
+            print("AAAAAAAA = \(items)")
+//                {$0.completionHistory.contains(where: (dateComponents(from: $0.completionHistory.date) == dateComponents(from: selectedDate)))})
+
+//            items = items.filter({dateComponents(from: $0.completionHistory.date == dateComponents(from: selectedDate))})
+//            items = items.filter({ dateComponents(from: $0.date) == dateComponents(from: selectedDate)})
             let habit = items[indexPath.row]
+            print("BBBBBBB = \(habit)")
+            print("CCCCCCC = \(indexPath.row)")
             
-            //TODO: выводить только те, которые есть в календаре на указанную дату. При запуске приложения сегодня первый раз, создавать автоматически на сегодняшнюю дату
+            //TODO: выводить только те, которые есть в календаре на указанную дату. 
+            //TODO: При запуске приложения сегодня первый раз, создавать автоматически на сегодняшнюю дату
             if !habit.habitDone {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "habitCell", for: indexPath) as? HabitViewCell
                 
