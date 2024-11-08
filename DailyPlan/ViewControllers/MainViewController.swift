@@ -20,6 +20,8 @@ class MainViewController: UIViewController  {
     @IBOutlet var addButton: UIButton!
     @IBOutlet var settingsButton: UIButton!
     
+
+    
     lazy var habits = Habit.getExampleHabitsList() // для тестирования без сохранения в сторадж
     
     var data: [String: Any] = [:]
@@ -155,6 +157,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell") ?? UITableViewCell(style: .default, reuseIdentifier: "cell")
+ 
         let sectionKey = sectionTitles[indexPath.section]
         
         switch indexPath.section {
@@ -167,13 +170,11 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "habitCell", for: indexPath) as? HabitViewCell
                 
                 let content = cell?.contentConfiguration
+
                 cell?.habitLabel.text = habit.habit
                 cell?.leftTimesADayLabel.text = leftTimeADate(for: habit).formatted()
                 //TODO: дописать
-                cell?.progress.progress = 0.7 //(Float(habitCalendar.filter({
-    //                $0.habitID == habit.id && $0.habitDone
-    //            }).count) / Float(habit.duration))
-                
+                cell?.progress.progress = habit.progress / 100
                 cell?.contentConfiguration = content
                 return cell!
                 
@@ -202,7 +203,11 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         }
 
         return cell
+        
+        
     }
+    
+
 
     // Название заголовка для каждой секции
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
