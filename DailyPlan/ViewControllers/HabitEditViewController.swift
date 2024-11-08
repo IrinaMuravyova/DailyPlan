@@ -7,6 +7,10 @@
 
 import UIKit
 
+protocol DeclinedWordsDelegate {
+    func getDeclinedDayWord(for number: Int) -> String
+}
+
 class HabitEditViewController: UIViewController {
 
     @IBOutlet var habitTextField: UITextField!
@@ -29,7 +33,7 @@ class HabitEditViewController: UIViewController {
     var startDurationValue = "месяц"
     
     
-    weak var delegate: NewHabitViewControllerDelegate?
+    weak var delegate: HabitEditViewControllerDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -334,8 +338,9 @@ extension HabitEditViewController: UIPickerViewDelegate, UIPickerViewDataSource 
 }
 
 // MARK: Get declined words
-extension HabitEditViewController {
-    private func getDeclinedDayWord(for number: Int) -> String {
+extension HabitEditViewController: DeclinedWordsDelegate {
+    
+    func getDeclinedDayWord(for number: Int) -> String {
         let lastDigit = number % 10
         let lastTwoDigits = number % 100
         

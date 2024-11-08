@@ -7,7 +7,7 @@
 
 import UIKit
 
-protocol NewHabitViewControllerDelegate: AnyObject {
+protocol HabitEditViewControllerDelegate: AnyObject {
     func add(_ habit: Habit)
 }
 
@@ -33,9 +33,15 @@ class MainViewController: UIViewController  {
 
     let titleForController = ["Иду к целям!"]
     
+    var delegate: DeclinedWordsDelegate?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        //Установка делегатов
+        self.delegate = HabitEditViewController()
+        
+        
         setTitleNavigationController()
         
         tableView.dataSource = self
@@ -115,6 +121,9 @@ extension MainViewController {
 
 // MARK: - UITableView methods
 extension MainViewController: UITableViewDelegate, UITableViewDataSource {
+   
+//    var delegate: SomeProtocol?
+    
     // Количество секций в таблице
     func numberOfSections(in tableView: UITableView) -> Int {
         return sectionTitles.count
@@ -174,7 +183,8 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
                 let content = cell?.contentConfiguration
                 
                 cell?.habitLabel.text = habit.habit
-                cell?.leftDaysLabel.text = "Еще \(leftDaysToDo(habit)) дней"
+                let declinedWord = delegate?.getDeclinedDayWord(for: leftDaysToDo(habit))
+                cell?.leftDaysLabel.text = "Ещё \(leftDaysToDo(habit)) \(declinedWord ?? "дня")"
                 cell?.percentLabel.text = "\(habit.progress.formatted())%"
                 cell?.contentConfiguration = content
                 
@@ -230,14 +240,7 @@ extension MainViewController {
     }
     
     private func leftDaysToDo(_ habit: Habit) -> Int {
-//        habit.duration - (habitCalendar.filter({
-//            $0.year == currentYear
-//            && $0.month == currentMonth
-//            && $0.day == currentDay
-//            && $0.habitID == habit.id
-//        })
-//            .first?.timesADateDone ?? 0)
-        6 //TODO: дописать
+        habit.duration - habit.completionHistory.filter({$0.status == .completed}).count
     }
     
     // Функция для фильтрации задач по дате
@@ -260,7 +263,7 @@ extension MainViewController {
 }
 
 // MARK: - NewHabitViewControllerDelegate
-extension MainViewController: NewHabitViewControllerDelegate {
+extension MainViewController: HabitEditViewControllerDelegate {
     //TODO: сделать дженерик
     func add(_ habit: Habit) {
         habits.append(habit)

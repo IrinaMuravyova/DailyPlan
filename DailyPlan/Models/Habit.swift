@@ -69,6 +69,14 @@ struct Habit: Codable {
                 habitDone: true,
                 startDate: Calendar.current.startOfDay(for: Date()) - 1,
                 endDate: Calendar.current.startOfDay(for: Date()) + 3,
+                completionHistory: [
+                    HabitCompletionRecord(date: Date(), timesDone: 0, status: .completed),
+                    HabitCompletionRecord(date: Date(), timesDone: 0, status: .completed),
+                    HabitCompletionRecord(date: Date(), timesDone: 0, status: .completed),
+                    HabitCompletionRecord(date: Date(), timesDone: 0, status: .completed),
+                    HabitCompletionRecord(date: Date(), timesDone: 0, status: .completed),
+                    HabitCompletionRecord(date: Date(), timesDone: 0, status: .completed)
+                ],
                 id: 2
             ),
             Habit(
