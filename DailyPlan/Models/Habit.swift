@@ -51,6 +51,7 @@ struct Habit: Codable {
                 habitDone: false,
                 startDate: Calendar.current.startOfDay(for: Date()),
                 endDate: Calendar.current.startOfDay(for: Date()) + 5,
+                completionHistory: [HabitCompletionRecord(date: Date(), timesDone: 0, status: .created)],
                 id: 1
             ),
             Habit(
@@ -65,7 +66,7 @@ struct Habit: Codable {
                 doOnFriday: false,
                 doOnSaturday: false,
                 doOnSunday: false,
-                habitDone: false,
+                habitDone: true,
                 startDate: Calendar.current.startOfDay(for: Date()) - 1,
                 endDate: Calendar.current.startOfDay(for: Date()) + 3,
                 id: 2
@@ -204,45 +205,6 @@ enum HabitStatus : Codable{
 // Структура записи выполнения привычки
 struct HabitCompletionRecord: Codable {
     let date: Date
+    let timesDone: Int
     let status: HabitStatus
 }
-
-//struct HabitCalendar: Codable {
-//    let year: Int
-//    let month: Int
-//    let day: Int  
-//    let habitID: Int
-//    var habitDone: Bool = false
-//    var timesADateDone: Int = 0
-//    //TODO: дописать id
-//    var id: Int = 0
-//    
-//    static func getHabitCalendarExamples() -> [HabitCalendar] {
-//        [HabitCalendar(year: 2024,
-//                       month: 10,
-//                       day: 30,
-//                       habitID: 1,
-//                       habitDone: false,
-//                       timesADateDone: 1),
-//         HabitCalendar(year: 2024,
-//                       month: 10,
-//                       day: 29,
-//                       habitID: 1,
-//                       habitDone: true,
-//                       timesADateDone: 2),
-//         HabitCalendar(year: 2024,
-//                       month: 10,
-//                       day: 28,
-//                       habitID: 1,
-//                       habitDone: true,
-//                       timesADateDone: 2),
-//         HabitCalendar(year: 2024,
-//                       month: 10,
-//                       day: 30,
-//                       habitID: 3,
-//                       habitDone: false,
-//                       timesADateDone: 1)
-//        ]
-//    }
-//}
-

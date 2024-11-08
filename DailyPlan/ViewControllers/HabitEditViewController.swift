@@ -24,9 +24,8 @@ class HabitEditViewController: UIViewController {
     @IBOutlet var sundayButton: UIButton!
 
     @IBOutlet var addHabitButton: UIButton!
-    @IBOutlet var cancelButton: UIButton!
     
-    var durationOptions = ["день", "месяц", "год"] //TODO: сделать склонение в зависимости от числа
+    var durationOptions = ["день", "месяц", "год"]
     var startDurationValue = "месяц"
     
     
@@ -84,32 +83,22 @@ class HabitEditViewController: UIViewController {
         fridayButton.layer.cornerRadius = fridayButton.frame.size.width / 2
         saturdayButton.layer.cornerRadius = saturdayButton.frame.size.width / 2
         sundayButton.layer.cornerRadius = sundayButton.frame.size.width / 2
-    
-
         addHabitButton.translatesAutoresizingMaskIntoConstraints = false
-        cancelButton.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             addHabitButton.heightAnchor.constraint(equalToConstant: 50), // Устанавливаем высоту кнопки
             
-            cancelButton.heightAnchor.constraint(equalTo: addHabitButton.heightAnchor),
-            cancelButton.widthAnchor.constraint(equalTo: cancelButton.heightAnchor)
         ])
 
         addHabitButton.titleLabel?.font = UIFont.systemFont(ofSize: 22)
         addHabitButton.titleLabel?.adjustsFontSizeToFitWidth = true
         addHabitButton.titleLabel?.minimumScaleFactor = 0.5
         
-        cancelButton.titleLabel?.text = "ᐸ"
-        cancelButton.titleLabel?.textColor = .white
-        
         var hasRoundedCorners = false
         // Устанавливаем угол только один раз
             if !hasRoundedCorners {
                 addHabitButton.layer.cornerRadius = addHabitButton.frame.size.height / 2
-                cancelButton.layer.cornerRadius = cancelButton.frame.size.height / 2
                 addHabitButton.layer.masksToBounds = true
-                cancelButton.layer.masksToBounds = true
                 hasRoundedCorners = true
             }
         
@@ -118,11 +107,6 @@ class HabitEditViewController: UIViewController {
     
     @IBAction func savingHabit(_ sender: UIButton) {
         addHabit()
-    }
-    
-    
-    @IBAction func cancelAddingHabit(_ sender: UIButton) {
-        self.navigationController?.popViewController(animated: true)
     }
 
     
@@ -191,7 +175,7 @@ class HabitEditViewController: UIViewController {
         
         StorageManager.shared.save(habit: newHabit)
         delegate?.add(newHabit)
-        navigationController?.popViewController(animated: true)
+//        navigationController?.popViewController(animated: true)
     }
     
     func getEndDateOfPeriod() -> Date {
@@ -293,7 +277,7 @@ class HabitEditViewController: UIViewController {
         let completionRecord =
         Date() >= calendar.startOfDay(for: Date()) && Date() <= getEndDateOfPeriod()
         && selectedWeekdays.contains(calendar.component(.weekday, from: Date()))
-        ? [HabitCompletionRecord(date: Date(), status: .created)]
+        ? [HabitCompletionRecord(date: Date(), timesDone: 0, status: .created)]
         : []
         
         return completionRecord
@@ -320,7 +304,6 @@ extension HabitEditViewController: UIPickerViewDelegate, UIPickerViewDataSource 
     }
 
     // MARK: - UIPickerView Delegate Methods
-
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
         return durationOptions[row] // Текст для каждого элемента
     }

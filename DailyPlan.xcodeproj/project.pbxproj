@@ -13,9 +13,11 @@
 		886644802CD231AB00DE1608 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8866447F2CD231AB00DE1608 /* Assets.xcassets */; };
 		886644832CD231AB00DE1608 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 886644822CD231AB00DE1608 /* Base */; };
 		8866448B2CD2327400DE1608 /* Habit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8866448A2CD2327400DE1608 /* Habit.swift */; };
-		8866448F2CD23E1A00DE1608 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8866448E2CD23E1900DE1608 /* MainViewController.swift */; };
 		886644912CD23FAF00DE1608 /* HabitViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886644902CD23FAF00DE1608 /* HabitViewCell.swift */; };
 		886644942CD313C000DE1608 /* HabitEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886644932CD313C000DE1608 /* HabitEditViewController.swift */; };
+		88D23BD62CDB7C9F005BC497 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D23BD52CDB7C9F005BC497 /* MainViewController.swift */; };
+		88D23BDA2CDCF885005BC497 /* Pill.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D23BD92CDCF885005BC497 /* Pill.swift */; };
+		88D23BDC2CDCF892005BC497 /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D23BDB2CDCF892005BC497 /* Task.swift */; };
 		88EEDFB32CD3610500317A40 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88EEDFB22CD3610500317A40 /* StorageManager.swift */; };
 /* End PBXBuildFile section */
 
@@ -28,9 +30,11 @@
 		886644822CD231AB00DE1608 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		886644842CD231AB00DE1608 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8866448A2CD2327400DE1608 /* Habit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Habit.swift; sourceTree = "<group>"; };
-		8866448E2CD23E1900DE1608 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		886644902CD23FAF00DE1608 /* HabitViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitViewCell.swift; sourceTree = "<group>"; };
 		886644932CD313C000DE1608 /* HabitEditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitEditViewController.swift; sourceTree = "<group>"; };
+		88D23BD52CDB7C9F005BC497 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		88D23BD92CDCF885005BC497 /* Pill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pill.swift; sourceTree = "<group>"; };
+		88D23BDB2CDCF892005BC497 /* Task.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Task.swift; sourceTree = "<group>"; };
 		88EEDFB22CD3610500317A40 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -66,7 +70,6 @@
 			children = (
 				8866448C2CD2327B00DE1608 /* Models */,
 				8866448D2CD23B3600DE1608 /* ViewControllers */,
-				88EEDFB72CD8DA4600317A40 /* Views */,
 				886644922CD23FB500DE1608 /* Cells */,
 				88EEDFB42CD3611800317A40 /* Storage */,
 				886644762CD231AA00DE1608 /* AppDelegate.swift */,
@@ -83,6 +86,8 @@
 			isa = PBXGroup;
 			children = (
 				8866448A2CD2327400DE1608 /* Habit.swift */,
+				88D23BD92CDCF885005BC497 /* Pill.swift */,
+				88D23BDB2CDCF892005BC497 /* Task.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -90,7 +95,7 @@
 		8866448D2CD23B3600DE1608 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
-				8866448E2CD23E1900DE1608 /* MainViewController.swift */,
+				88D23BD52CDB7C9F005BC497 /* MainViewController.swift */,
 				886644932CD313C000DE1608 /* HabitEditViewController.swift */,
 			);
 			path = ViewControllers;
@@ -110,13 +115,6 @@
 				88EEDFB22CD3610500317A40 /* StorageManager.swift */,
 			);
 			path = Storage;
-			sourceTree = "<group>";
-		};
-		88EEDFB72CD8DA4600317A40 /* Views */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -192,11 +190,13 @@
 			files = (
 				886644942CD313C000DE1608 /* HabitEditViewController.swift in Sources */,
 				886644772CD231AA00DE1608 /* AppDelegate.swift in Sources */,
+				88D23BDC2CDCF892005BC497 /* Task.swift in Sources */,
 				8866448B2CD2327400DE1608 /* Habit.swift in Sources */,
 				886644912CD23FAF00DE1608 /* HabitViewCell.swift in Sources */,
 				886644792CD231AA00DE1608 /* SceneDelegate.swift in Sources */,
-				8866448F2CD23E1A00DE1608 /* MainViewController.swift in Sources */,
+				88D23BDA2CDCF885005BC497 /* Pill.swift in Sources */,
 				88EEDFB32CD3610500317A40 /* StorageManager.swift in Sources */,
+				88D23BD62CDB7C9F005BC497 /* MainViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
