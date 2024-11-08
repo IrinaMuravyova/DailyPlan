@@ -15,8 +15,34 @@ class HabitViewCell: UITableViewCell {
 
     @IBOutlet var leftDaysLabel: UILabel!
     @IBOutlet var percentLabel: UILabel!
+    
+//    private let containerView = UIView()
+    @IBOutlet var containerForHabitCellsView: UIView!
+    
+    
+
+
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        setupShadow()
+    }
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setupShadow()
+    }
+
     override func awakeFromNib() {
         super.awakeFromNib()
+        
+        // Установка цвета контейнера View + тень, чтобы создать 3D эффект
+        contentView.backgroundColor = .clear
+        backgroundColor = .clear
+        contentView.layer.cornerRadius = 8
+        contentView.layer.masksToBounds = true
+        
+        setupShadow()
+
         // Initialization code
     }
 
@@ -25,5 +51,19 @@ class HabitViewCell: UITableViewCell {
 
         // Configure the view for the selected state
     }
+     
+    
+    
+}
 
+extension HabitViewCell {
+    func setupShadow() {
+    // Настройка тени для containerView
+    if let containerForHabitCellView = containerForHabitCellsView {
+        containerForHabitCellView.layer.shadowColor = UIColor.black.cgColor // Цвет тени
+        containerForHabitCellView.layer.shadowOpacity = 0.2 // Прозрачность тени
+        containerForHabitCellView.layer.shadowOffset = CGSize(width: 0, height: 2) // Смещение тени
+        containerForHabitCellView.layer.shadowRadius = 4 // Радиус размытия тени
+    }
+    }
 }

@@ -20,7 +20,6 @@ class MainViewController: UIViewController  {
     @IBOutlet var addButton: UIButton!
     @IBOutlet var settingsButton: UIButton!
     
-
     
     lazy var habits = Habit.getExampleHabitsList() // для тестирования без сохранения в сторадж
     
@@ -36,24 +35,27 @@ class MainViewController: UIViewController  {
     let titleForController = ["Иду к целям!"]
     
     var delegate: DeclinedWordsDelegate?
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         //Установка делегатов
         self.delegate = HabitEditViewController()
-        
+        tableView.dataSource = self
+        tableView.delegate = self
         
         setTitleNavigationController()
         
-        tableView.dataSource = self
-        tableView.delegate = self
+        // Настройка цветов
+        tableView.backgroundColor = UIColor.systemGray6
+        footerView.backgroundColor = tableView.backgroundColor
+        view.backgroundColor = tableView.backgroundColor
 
         let calendar = Calendar.current
         let currentDate = Date()
         
         // Извлекаем компоненты года, месяца и дня
-
         selectedDate = calendar.date(from: dateComponents(from: currentDate))
         
         currentDateForLabel = self.selectedDate.formatted(date: .abbreviated, time: .omitted)
@@ -123,27 +125,24 @@ extension MainViewController {
 
 // MARK: - UITableView methods
 extension MainViewController: UITableViewDelegate, UITableViewDataSource {
-   
-//    var delegate: SomeProtocol?
     
     // Количество секций в таблице
     func numberOfSections(in tableView: UITableView) -> Int {
         return sectionTitles.count
     }
-    
+
     // Количество строк в каждой секции
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let sectionKey = sectionTitles[section]
         let items : Any
         switch section {
         case 0: 
-            tableView.rowHeight = 60
+            tableView.rowHeight = 70
         
             let habitsForSelectedDate = data[sectionKey] as? [Habit] ?? [] //TODO: добавить обработчик ошибки
             items = habitsForSelectedDate.filter({$0.completionHistory.contains { record in
                 dateComponents(from: record.date ) == dateComponents(from: selectedDate)
-            }
-            })
+            }})
             
         case 1: 
             items = data[sectionKey] as? [String] ?? []
@@ -156,8 +155,10 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         return (items as AnyObject).count ?? 0
     }
     
+
     // Заполнение ячеек таблицы
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell") ?? UITableViewCell(style: .default, reuseIdentifier: "cell")
  
@@ -165,20 +166,20 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         
         switch indexPath.section {
         case 0: // строки с привычками
+            
             var items = data[sectionKey] as? [Habit] ?? [] //TODO: добавить обработчик ошибки
             items = items.filter({$0.completionHistory.contains { record in
                 dateComponents(from: record.date ) == dateComponents(from: selectedDate)
-            }
-            })
+            }})
             
             let habit = items[indexPath.row]
 
             //TODO: При запуске приложения сегодня первый раз, создавать автоматически на сегодняшнюю дату
             if !habit.habitDone {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "habitCell", for: indexPath) as? HabitViewCell
                 
+                let cell = tableView.dequeueReusableCell(withIdentifier: "habitCell", for: indexPath) as? HabitViewCell
                 let content = cell?.contentConfiguration
-
+                
                 cell?.habitLabel.text = habit.habit
                 cell?.leftTimesADayLabel.text = leftTimeADate(for: habit).formatted()
                 cell?.progress.progress = habit.progress / 100
@@ -186,7 +187,6 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
                 return cell!
                 
             } else {
-                
                 let cell = tableView.dequeueReusableCell(withIdentifier: "habitCellDone", for: indexPath) as? HabitViewCell
                 let content = cell?.contentConfiguration
                 
@@ -210,7 +210,6 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         }
 
         return cell
-        
         
     }
     
@@ -281,7 +280,7 @@ extension MainViewController: HabitEditViewControllerDelegate {
         habits.append(habit)
         print(habits)
         tableView.reloadData()
-        }
+    }
 }
 
 
