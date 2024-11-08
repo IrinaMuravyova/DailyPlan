@@ -173,7 +173,6 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
 
                 cell?.habitLabel.text = habit.habit
                 cell?.leftTimesADayLabel.text = leftTimeADate(for: habit).formatted()
-                //TODO: дописать
                 cell?.progress.progress = habit.progress / 100
                 cell?.contentConfiguration = content
                 return cell!
