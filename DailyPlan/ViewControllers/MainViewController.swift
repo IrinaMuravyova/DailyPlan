@@ -170,16 +170,9 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
                 dateComponents(from: record.date ) == dateComponents(from: selectedDate)
             }
             })
-            print("AAAAAAAA = \(items)")
-//                {$0.completionHistory.contains(where: (dateComponents(from: $0.completionHistory.date) == dateComponents(from: selectedDate)))})
-
-//            items = items.filter({dateComponents(from: $0.completionHistory.date == dateComponents(from: selectedDate))})
-//            items = items.filter({ dateComponents(from: $0.date) == dateComponents(from: selectedDate)})
-            let habit = items[indexPath.row]
-            print("BBBBBBB = \(habit)")
-            print("CCCCCCC = \(indexPath.row)")
             
-            //TODO: выводить только те, которые есть в календаре на указанную дату. 
+            let habit = items[indexPath.row]
+
             //TODO: При запуске приложения сегодня первый раз, создавать автоматически на сегодняшнюю дату
             if !habit.habitDone {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "habitCell", for: indexPath) as? HabitViewCell
