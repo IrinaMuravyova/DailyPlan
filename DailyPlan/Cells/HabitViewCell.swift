@@ -53,7 +53,7 @@ class HabitViewCell: UITableViewCell {
     }
      
     
-    
+
 }
 
 extension HabitViewCell {

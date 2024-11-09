@@ -7,13 +7,18 @@
 
 import Foundation
 
+protocol completionHistoryDelegate {
+    func createTodayCompletionHistory()
+}
+
 class StorageManager {
     
     static let shared = StorageManager()
     
     private var defaults = UserDefaults.standard
     private let habitsKey = "habits"
-//    private let habitsCalendarKey = "habitCalendar"
+    
+    var delegate: DateProcessingForHabitsDelegate?
     
     private init() {}
     
@@ -79,4 +84,20 @@ class StorageManager {
 //        return habitCalendar
 //    }
     
+    
+}
+
+extension StorageManager: completionHistoryDelegate {
+    func createTodayCompletionHistory() {
+        
+        var habits = fetchHabits()
+        let today = Calendar.current.startOfDay(for: Date())
+        habits = delegate?.habits(for: today) ?? [] //TODO: обработать ошибку
+        habits = delegate?.habits(forWeekDay: today) ?? []
+        print()
+        for i in 0 ..< habits.count {
+            habits[i].completionHistory.append(HabitCompletionRecord(date: today, timesDone: 0, status: .created))
+            save(habit: habits[i])
+        }
+    }
 }

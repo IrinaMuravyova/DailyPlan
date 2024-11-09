@@ -20,7 +20,17 @@ struct Habit: Codable {
     var doOnFriday: Bool
     var doOnSaturday: Bool
     var doOnSunday: Bool 
-    
+    var daysOfWeek: [Bool] {
+        return [
+            doOnSunday,
+            doOnMonday,
+            doOnTuesday,
+            doOnWednesday,
+            doOnThursday,
+            doOnFriday,
+            doOnSaturday
+        ]
+    }
     let habitDone: Bool
     
     let startDate: Date
@@ -106,30 +116,17 @@ struct Habit: Codable {
     private func markHabit() {}
     private func changeHabit() {}
     
-    // Проверка, подходит ли текущая дата для выполнения задачи
+    // Проверяю, что дата входит в интервал от startDate до endDate (если endDate указана)
     func isHabitDue(on date: Date) -> Bool {
-        let calendar = Calendar.current
-        
-        // Проверяем, что дата входит в интервал от startDate до endDate (если endDate указана)
-        if date >= startDate && date <= endDate {
-            return isWithinPeriod(on: date, calendar: calendar)
-        }
-        return false
+        return (date >= startDate && date <= endDate )
     }
         
     // Проверка, подходит ли дата по дню недели
-    private func isWithinPeriod(on date: Date, calendar: Calendar) -> Bool {
-//        switch periodicity {
-//        case .daily:
-//            return true
-//            
-//        case .weekly:
-//            return calendar.component(.weekday, from: date) == calendar.component(.weekday, from: startDate)
-//            
-//        case .monthly:
-//            return calendar.component(.day, from: date) == calendar.component(.day, from: startDate)
-//        }
-        return true //TODO: написать проверку на день недели
+    func isWithinPeriod(on date: Date) -> Bool {
+    // Получаем текущий день недели (1 - воскресенье, 2 - понедельник, ..., 7 - суббота)
+    let todayIndex = Calendar.current.component(.weekday, from: Date()) - 1
+    // Проверяем, стоит ли флаг на текущий день недели
+    return daysOfWeek[todayIndex]
     }
         
     // Функция для добавления записи выполнения задачи на определенную дату

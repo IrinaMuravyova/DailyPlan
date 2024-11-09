@@ -20,7 +20,7 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jcT-Tu-THa">
                                 <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                                 <subviews>
-                                    <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" contentInsetAdjustmentBehavior="scrollableAxes" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="33y-7P-D5G">
+                                    <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="33y-7P-D5G">
                                         <rect key="frame" x="0.0" y="100" width="393" height="661.66666666666663"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <prototypes>
@@ -61,6 +61,10 @@
                                                                             <nil key="highlightedColor"/>
                                                                         </label>
                                                                     </subviews>
+                                                                    <constraints>
+                                                                        <constraint firstItem="lDv-Q8-pQm" firstAttribute="width" secondItem="UXA-7m-EzC" secondAttribute="width" multiplier="0.55" id="5OF-oH-5Uf"/>
+                                                                        <constraint firstItem="WUH-fY-2Dd" firstAttribute="width" secondItem="UXA-7m-EzC" secondAttribute="width" multiplier="0.25" id="9zX-56-1xp"/>
+                                                                    </constraints>
                                                                 </stackView>
                                                             </subviews>
                                                             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -76,8 +80,6 @@
                                                         </view>
                                                     </subviews>
                                                     <constraints>
-                                                        <constraint firstItem="lDv-Q8-pQm" firstAttribute="width" secondItem="UXA-7m-EzC" secondAttribute="width" multiplier="0.55" id="5OF-oH-5Uf"/>
-                                                        <constraint firstItem="WUH-fY-2Dd" firstAttribute="width" secondItem="UXA-7m-EzC" secondAttribute="width" multiplier="0.25" id="9zX-56-1xp"/>
                                                         <constraint firstItem="ZHI-ZV-rKn" firstAttribute="top" secondItem="Bea-Ch-fle" secondAttribute="top" constant="5" id="Uvw-4e-Ys0"/>
                                                         <constraint firstAttribute="trailing" secondItem="ZHI-ZV-rKn" secondAttribute="trailing" constant="16" id="Vmi-sq-Zyq"/>
                                                         <constraint firstAttribute="bottom" secondItem="ZHI-ZV-rKn" secondAttribute="bottom" constant="5" id="YLq-NP-bW0"/>

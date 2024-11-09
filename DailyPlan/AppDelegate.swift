@@ -10,10 +10,19 @@ import UIKit
 @main
   class AppDelegate: UIResponder, UIApplicationDelegate {
 
-
-
+      var delegate: completionHistoryDelegate?
+      
+      
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        delegate = StorageManager.shared
+        
+        if isFirstOpenToday() {
+            print("Это первое открытие приложения за сегодня")
+            delegate?.createTodayCompletionHistory()
+        } else {
+            print("Приложение уже открывалось сегодня")
+        }
         return true
     }
 
@@ -33,4 +42,23 @@ import UIKit
 
 
 }
+//MARK: - Check date methods
+extension AppDelegate {
+    func isFirstOpenToday() -> Bool {
+        // Получаем текущую дату без времени
+        let today = Calendar.current.startOfDay(for: Date())
+        
+        // Получаем дату последнего открытия из UserDefaults
+        let lastOpenDate = UserDefaults.standard.object(forKey: "lastOpenDate") as? Date
+        
+        // Проверяем, была ли дата последнего открытия сегодня
+        if lastOpenDate == today {
+            return false // Сегодня уже открывали
+        } else {
+            // Сохраняем текущую дату как дату последнего открытия
+            UserDefaults.standard.set(today, forKey: "lastOpenDate")
+            return true // Это первое открытие за сегодня
+        }
+    }
 
+}

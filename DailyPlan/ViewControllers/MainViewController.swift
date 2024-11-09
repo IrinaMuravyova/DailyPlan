@@ -11,6 +11,11 @@ protocol HabitEditViewControllerDelegate: AnyObject {
     func add(_ habit: Habit)
 }
 
+protocol DateProcessingForHabitsDelegate {
+    func habits(for date: Date) -> [Habit]
+    func habits(forWeekDay date: Date) -> [Habit]
+}
+
 class MainViewController: UIViewController  {
     @IBOutlet var tableView: UITableView!
     @IBOutlet var footerView: UIView!
@@ -254,10 +259,6 @@ extension MainViewController {
         habit.duration - habit.completionHistory.filter({$0.status == .completed}).count
     }
     
-    // Функция для фильтрации задач по дате
-    func habits(for date: Date) -> [Habit] {
-        return habits.filter { $0.isHabitDue(on: date) }
-    }
     
     // Функция для обновления статуса выполнения задачи на определенную дату
 //    func updateHabitStatus(habit: Habit, date: Date, status: HabitStatus) {
@@ -283,6 +284,18 @@ extension MainViewController: HabitEditViewControllerDelegate {
     }
 }
 
+//MARK: - dateProcessingForHabitsDelegate
+extension MainViewController: DateProcessingForHabitsDelegate {
+    // Функция для фильтрации задач по дате
+    func habits(for date: Date) -> [Habit] {
+        return habits.filter { $0.isHabitDue(on: date) }
+    }
+    
+    // Функция для фильтрации задач по дню недели
+    func habits(forWeekDay date: Date) -> [Habit] {
+        return habits.filter { $0.isWithinPeriod(on: date)}
+    }
+}
 
 
 //полезный код для сравнения двух дат по дню
