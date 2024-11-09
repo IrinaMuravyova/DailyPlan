@@ -8,7 +8,7 @@
 import UIKit
 
 protocol HabitEditViewControllerDelegate: AnyObject {
-    func add(_ habit: Habit)
+    func didAddHabit(_ habit: Habit)
 }
 
 protocol DateProcessingForHabitsDelegate {
@@ -25,8 +25,8 @@ class MainViewController: UIViewController  {
     @IBOutlet var addButton: UIButton!
     @IBOutlet var settingsButton: UIButton!
     
-    
-    lazy var habits = Habit.getExampleHabitsList() // для тестирования без сохранения в сторадж
+    var habits: [Habit]!
+//    lazy var habits = Habit.getExampleHabitsList() // для тестирования без сохранения в сторадж
     
     var data: [String: Any] = [:]
     var sectionTitles: [String] = ["ПРИВЫЧКИ", "ЛЕКАРСТВА/БАДЫ", "ЗАДАЧИ"]
@@ -71,10 +71,11 @@ class MainViewController: UIViewController  {
         currentDay = Calendar.current.component(.day, from: selectedDate)
      
         
-//        habits = StorageManager.shared.fetchHabits()
-        
+        habits = StorageManager.shared.fetchHabits()
+        print("НАЧАЛЬНЫЙ МАССИВ")
+        print(habits!.count)
         data = [
-            "ПРИВЫЧКИ": habits,
+            "ПРИВЫЧКИ": habits!,
                 "ЛЕКАРСТВА/БАДЫ": ["Item 4", "Item 5"],
                 "ЗАДАЧИ": ["Item 6", "Item 7", "Item 8", "Item 9"]
             ]
@@ -87,7 +88,6 @@ class MainViewController: UIViewController  {
         addButton.layer.cornerRadius = addButton.frame.height / 2
         settingsButton.layer.cornerRadius = settingsButton.frame.height / 2
     }
-    
     
     @IBAction func lastButtonTapped(_ sender: UIButton) {
     }
@@ -102,6 +102,7 @@ class MainViewController: UIViewController  {
         guard let newHabitVC = segue.destination as? HabitEditViewController else { return }
         newHabitVC.delegate = self
     }
+
 }
 
 // MARK: - Methods for ViewDidLoad
@@ -164,7 +165,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     // Заполнение ячеек таблицы
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        
+        habits = StorageManager.shared.fetchHabits()
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell") ?? UITableViewCell(style: .default, reuseIdentifier: "cell")
  
         let sectionKey = sectionTitles[indexPath.section]
@@ -178,8 +179,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
             }})
             
             let habit = items[indexPath.row]
-
-            //TODO: При запуске приложения сегодня первый раз, создавать автоматически на сегодняшнюю дату
+                              
             if !habit.habitDone {
                 
                 let cell = tableView.dequeueReusableCell(withIdentifier: "habitCell", for: indexPath) as? HabitViewCell
@@ -227,23 +227,45 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         
         // MARK: - UITableViewDelegate (какая строка выделена)
 
-//        func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//            tableView.deselectRow(at: indexPath, animated: true)
-//            let sectionKey = sectionTitles[indexPath.section]
-//            let items = data[sectionKey] as? [String]
-//            let item = items?[indexPath.row]
-//            print("Выбран элемент: \(item ?? "")")
-//        }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        let sectionKey = sectionTitles[indexPath.section]
+        switch indexPath.section {
+        case 0:
+            let items = data[sectionKey] as? [Habit]
+            let item = items?[indexPath.row]
+
+            let itemWithCompletionRecordOnSelectedDate = item?.completionHistory.filter({
+                Calendar.current.startOfDay(for: $0.date) == Calendar.current.startOfDay(for: Date())
+            }).first
+            if item?.timesADay == (itemWithCompletionRecordOnSelectedDate?.timesDone ?? 0) + 1 {
+                // в completion timesDone  += 1, статус .completed, перезаписать данные в сторадж, reload секции
+            } else {
+                // в completion timesDone  += 1
+//                itemWithCompletionRecordOnSelectedDate?.timesDone += 1
+            }
+        default:
+            print() //TODO: обработать ошибку
+        }
+    }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
        
         if editingStyle == .delete {
-            //TODO: решить вопрос с переполнением
+            // Удаляем элемент из хранилища
+            
             StorageManager.shared.deleteHabit(at: indexPath.row)
+            habits = StorageManager.shared.fetchHabits()
             tableView.deselectRow(at: indexPath, animated: true)
-        } //TODO: продумать логику чтобы удалять одну запись и записи из календаря для нее
+        }
     }
     
+    func tableView(_ tableView: UITableView, didEndEditingRowAt indexPath: IndexPath?) {
+        // Перезагружаем данные для конкретной строки или всей таблицы
+        if let indexPath = indexPath {
+            tableView.reloadRows(at: [indexPath], with: .automatic)
+        }
+    }
 }
 
 //MARK: - Habits methods
@@ -266,21 +288,19 @@ extension MainViewController {
 //        habits[index].addCompletionRecord(on: date, status: status)
 //    }
     
-    // Пример функции для обновления статуса задачи (вызывается по кнопке, например)
-    func completeHait(_ habit: Habit, on date: Date) {
-//        updateHabitStatus(habit: Habit, date: date, status: .completed)
-//        tableView.reloadData()
-    }
-    
 }
 
 // MARK: - NewHabitViewControllerDelegate
 extension MainViewController: HabitEditViewControllerDelegate {
-    //TODO: сделать дженерик
-    func add(_ habit: Habit) {
+    func didAddHabit(_ habit: Habit) {
+        // Добавляем новую привычку в массив
         habits.append(habit)
-        print(habits)
-        tableView.reloadData()
+        // Определяем индекс секции, которую нужно обновить
+        let sectionIndex = 0 // привычки в первой секции
+        let indexSet = IndexSet(integer: sectionIndex)
+
+       // Обновляем данные только этой секции
+       tableView.reloadSections(indexSet, with: .automatic)
     }
 }
 
@@ -298,12 +318,14 @@ extension MainViewController: DateProcessingForHabitsDelegate {
 }
 
 
-//полезный код для сравнения двух дат по дню
-//let selectedDate = Calendar.current.startOfDay(for: Date())
-//let currentDate = Calendar.current.startOfDay(for: Date())
-//
-//if Calendar.current.isDate(selectedDate, inSameDayAs: currentDate) {
-//    print("Dates are the same.")
-//} else {
-//    print("Dates are different.")
-//}
+
+    //полезный код для сравнения двух дат по дню
+//    let selectedDate = Calendar.current.startOfDay(for: Date())
+//    let currentDate = Calendar.current.startOfDay(for: Date())
+//    
+//    if Calendar.current.isDate(selectedDate, inSameDayAs: currentDate) {
+//        print("Dates are the same.")
+//    } else {
+//        print("Dates are different.")
+//    }
+

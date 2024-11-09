@@ -19,6 +19,7 @@ import UIKit
         
         if isFirstOpenToday() {
             print("Это первое открытие приложения за сегодня")
+            delegate?.checkAndCancelYesterdayCompletionHistory()
             delegate?.createTodayCompletionHistory()
         } else {
             print("Приложение уже открывалось сегодня")

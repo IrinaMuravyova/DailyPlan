@@ -9,6 +9,7 @@ import Foundation
 
 protocol completionHistoryDelegate {
     func createTodayCompletionHistory()
+    func checkAndCancelYesterdayCompletionHistory()
 }
 
 class StorageManager {
@@ -39,51 +40,24 @@ class StorageManager {
         encoder.dateEncodingStrategy = .iso8601
         guard let data = try? encoder.encode(habits) else { return }
         defaults.set(data, forKey: habitsKey)
+    }
+    
+    func deleteHabit(at index: Int){
+        var habits = fetchHabits()
         
-//        var habitsCalendar = fetchHabitsCalendar()
-//        habitsCalendar.append(HabitCalendar(
-//            year: Int(Date().description.prefix(4))!,
-//            month: Int(Date().description.prefix(10).suffix(5).prefix(2))!,
-//            day: Int(Date().description.prefix(10).suffix(2))!,
-//            habitID: habit.id))
-//        guard let data = try? encoder.encode(habitsCalendar) else { return }
-//        defaults.set(data, forKey: habitsCalendarKey)
-    }
-    
-        func deleteHabit(at index: Int ){
-            var habits = fetchHabits()
-            let removedHabit = habits.remove(at: index)
-            
-//            var habitsCalendar = fetchHabitsCalendar()
-//            habitsCalendar.removeAll(where: {$0.habitID == removedHabit.id})
-            
-            let encoder = JSONEncoder()
-            // Устанавливаю стратегию кодирования для дат (ISO 8601)
-            encoder.dateEncodingStrategy = .iso8601
-            
-            guard let data = try? encoder.encode(habits) else { return }
-            defaults.set(data, forKey: habitsKey)
-
-//            guard let data = try? encoder.encode(habitsCalendar) else { return }
-//            defaults.set(data, forKey: habitsCalendarKey)
-    }
-    
-    
-    func updateHabit(at index: Int) {
+        let encoder = JSONEncoder()
+        // Устанавливаю стратегию кодирования для дат (ISO 8601)
+        encoder.dateEncodingStrategy = .iso8601
+        
+        guard let data = try? encoder.encode(habits) else { return }
+        defaults.set(data, forKey: habitsKey)
         
     }
     
     
-//    func fetchHabitsCalendar() -> [HabitCalendar] {
-//        guard let data = defaults.data(forKey: habitsCalendarKey) else {
-//            return [] }
-//        let decoder = JSONDecoder()
-//        // Устанавливаю стратегию декодирования для дат в формате ISO 8601
-//        decoder.dateDecodingStrategy = .iso8601
-//        guard let habitCalendar = try? decoder.decode([HabitCalendar].self, from: data) else {return [] }
-//        return habitCalendar
-//    }
-    
+    func updateHabit(with habitID: Int) {
+        
+    }
     
 }
 
@@ -99,5 +73,10 @@ extension StorageManager: completionHistoryDelegate {
             habits[i].completionHistory.append(HabitCompletionRecord(date: today, timesDone: 0, status: .created))
             save(habit: habits[i])
         }
+    }
+    
+    //TODO: если есть за вчера записи в статусе не .complited, то за вчера пометить их как невыполненные
+    func checkAndCancelYesterdayCompletionHistory() {
+        // получается что проверяю в mainVC, а перезаписываю в памяти здесь
     }
 }

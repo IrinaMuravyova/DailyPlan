@@ -59,11 +59,11 @@ class HabitEditViewController: UIViewController {
         updateCountDeclinedWord()
         timesADayTextField.addTarget(self, action: #selector(updateCountDeclinedWord), for: .editingChanged)
         
-        // picker view settings
+        
         // Установка делегатов
         durationTypePickerView.delegate = self
         durationTypePickerView.dataSource = self
-        
+        // picker view settings
         durationTypePickerView.selectedRow(inComponent: 0)
         
         // Установите выбранный индекс на основе текущего значения
@@ -155,11 +155,19 @@ class HabitEditViewController: UIViewController {
         guard let habit = habitTextField.text else { return }
         guard !habit.isEmpty else { return } //TODO: добавить алерт, если пытаются сохранить без текста привычки
 
-        let duration = countSelectedDaysInPeriod()
-
+        var weekDayIsChecked = false
+        let buttons = [mondayButton, tuesdayButton, wednesdayButton, thursdayButton, fridayButton, saturdayButton, sundayButton]
+        for button in buttons {
+            if buttonIsOn(button!) {
+                weekDayIsChecked = true
+                break
+            }
+        }
+        guard !weekDayIsChecked else { return } //TODO: добавить алерт чтобы выбрали хотя бы один день недели
+            
         var newHabit = Habit(
             habit: habit,
-            duration: duration,
+            duration: countSelectedDaysInPeriod(),
             timesADay: Int(timesADayTextField.text ?? "") ?? 1,
             progress: 0,
             doOnMonday:  buttonIsOn(mondayButton),
@@ -178,8 +186,10 @@ class HabitEditViewController: UIViewController {
         newHabit.completionHistory = createTodayCompletionRecord()
         
         StorageManager.shared.save(habit: newHabit)
-        delegate?.add(newHabit)
-//        navigationController?.popViewController(animated: true)
+        
+        // Передаем новую привычку через делегат
+        delegate?.didAddHabit(newHabit)
+        navigationController?.popViewController(animated: true)
     }
     
     func getEndDateOfPeriod() -> Date {
@@ -286,11 +296,6 @@ class HabitEditViewController: UIViewController {
         
         return completionRecord
     }
-    
-    //TODO: дописать (подгружать, очищать, добавлять, отправлять в хранилище
-//    private func addTodayCompletionRecord() -> HabitCompletionRecord {
-//        
-//    }
 }
 
 //MARK: UIPickerView Methods
