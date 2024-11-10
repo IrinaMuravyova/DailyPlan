@@ -156,7 +156,15 @@ class HabitEditViewController: UIViewController {
         guard !habit.isEmpty else { return } //TODO: добавить алерт, если пытаются сохранить без текста привычки
 
         var weekDayIsChecked = false
-        let buttons = [mondayButton, tuesdayButton, wednesdayButton, thursdayButton, fridayButton, saturdayButton, sundayButton]
+        let buttons = [
+            mondayButton,
+            tuesdayButton,
+            wednesdayButton,
+            thursdayButton,
+            fridayButton,
+            saturdayButton,
+            sundayButton
+        ]
         for button in buttons {
             if buttonIsOn(button!) {
                 weekDayIsChecked = true
@@ -185,7 +193,7 @@ class HabitEditViewController: UIViewController {
         
         newHabit.completionHistory = createTodayCompletionRecord()
         
-        StorageManager.shared.save(habit: newHabit)
+        StorageManager.shared.save(addedHabit: newHabit)
         
         // Передаем новую привычку через делегат
         delegate?.didAddHabit(newHabit)

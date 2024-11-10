@@ -32,9 +32,24 @@ class StorageManager {
         return habits
     }
     
-    func save(habit: Habit) {
+    func save(addedHabit: Habit) {
         var habits = fetchHabits()
-        habits.append(habit)
+        habits.append(addedHabit)
+        let encoder = JSONEncoder()
+        // Устанавливаю стратегию кодирования для дат (ISO 8601)
+        encoder.dateEncodingStrategy = .iso8601
+        guard let data = try? encoder.encode(habits) else { return }
+        defaults.set(data, forKey: habitsKey)
+    }
+    
+    func save(changedHabit: Habit) {
+        var habits = fetchHabits()
+        
+        let index = habits.firstIndex {$0.id == changedHabit.id}
+        guard let index = index else { return }
+        habits.remove(at: index)
+        habits.append(changedHabit)
+        
         let encoder = JSONEncoder()
         // Устанавливаю стратегию кодирования для дат (ISO 8601)
         encoder.dateEncodingStrategy = .iso8601
@@ -68,10 +83,10 @@ extension StorageManager: completionHistoryDelegate {
         let today = Calendar.current.startOfDay(for: Date())
         habits = delegate?.habits(for: today) ?? [] //TODO: обработать ошибку
         habits = delegate?.habits(forWeekDay: today) ?? []
-        print()
+       
         for i in 0 ..< habits.count {
             habits[i].completionHistory.append(HabitCompletionRecord(date: today, timesDone: 0, status: .created))
-            save(habit: habits[i])
+            save(changedHabit: habits[i])
         }
     }
     
