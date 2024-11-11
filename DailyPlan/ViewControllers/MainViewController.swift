@@ -12,8 +12,9 @@ protocol HabitEditViewControllerDelegate: AnyObject {
 }
 
 protocol DateProcessingForHabitsDelegate {
-    func habits(for date: Date) -> [Habit]
-    func habits(forWeekDay date: Date) -> [Habit]
+    func filteredOnDay(_ habits: [Habit], for date: Date) -> [Habit]
+    func filteredOnWeekDay(_ habits: [Habit], for date: Date) -> [Habit]
+    func setCurrentDateLabel(on date: Date)
 }
 
 class MainViewController: UIViewController  {
@@ -26,25 +27,22 @@ class MainViewController: UIViewController  {
     @IBOutlet var settingsButton: UIButton!
     
     var habits: [Habit]!
-//    lazy var habits = Habit.getExampleHabitsList() // для тестирования без сохранения в сторадж
     
     var data: [String: Any] = [:]
     var sectionTitles: [String] = ["ПРИВЫЧКИ", "ЛЕКАРСТВА/БАДЫ", "ЗАДАЧИ"]
     
     var selectedDate: Date!
     var currentDateForLabel: String = ""
-    var currentYear: Int = 0
-    var currentMonth: Int = 0
-    var currentDay: Int  = 0
 
-    let titleForController = ["Иду к целям!"]
+    let titlesForMainScreen = [
+        "Иду к цели", "Сегодня точно получится!", "Давай сделаем это!"]
     
     var delegate: DeclinedWordsDelegate?
 
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         //Установка делегатов
         self.delegate = HabitEditViewController()
         tableView.dataSource = self
@@ -57,23 +55,14 @@ class MainViewController: UIViewController  {
         footerView.backgroundColor = tableView.backgroundColor
         view.backgroundColor = tableView.backgroundColor
 
-        let calendar = Calendar.current
-        let currentDate = Date()
-        
-        // Извлекаем компоненты года, месяца и дня
-        selectedDate = calendar.date(from: dateComponents(from: currentDate))
-        
-        currentDateForLabel = self.selectedDate.formatted(date: .abbreviated, time: .omitted)
-        currentDateLabel.text = currentDateForLabel
+        selectedDate = Date()
+        setCurrentDateLabel(on: selectedDate)
 
-        currentYear =  Calendar.current.component(.year, from: selectedDate)
-        currentMonth = Calendar.current.component(.month, from: selectedDate)
-        currentDay = Calendar.current.component(.day, from: selectedDate)
-     
-        
+//        habits = Habit.getExampleHabitsList() // для тестирования без сохранения в сторадж
         habits = StorageManager.shared.fetchHabits()
         print("НАЧАЛЬНЫЙ МАССИВ")
         print(habits!.count)
+//        print(habits!)
         data = [
             "ПРИВЫЧКИ": habits!,
                 "ЛЕКАРСТВА/БАДЫ": ["Item 4", "Item 5"],
@@ -110,7 +99,7 @@ extension MainViewController {
     
     private func setTitleNavigationController() {
         // Устанавливаю текст заголовка
-        navigationItem.title = titleForController.randomElement()
+        navigationItem.title = titlesForMainScreen.randomElement()
         
         // Настройка шрифта и цвета заголовка
         if let navigationBar = self.navigationController?.navigationBar {
@@ -253,7 +242,6 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
        
         if editingStyle == .delete {
             // Удаляем элемент из хранилища
-            
             StorageManager.shared.deleteHabit(at: indexPath.row)
             habits = StorageManager.shared.fetchHabits()
             tableView.deselectRow(at: indexPath, animated: true)
@@ -302,30 +290,33 @@ extension MainViewController: HabitEditViewControllerDelegate {
        // Обновляем данные только этой секции
        tableView.reloadSections(indexSet, with: .automatic)
     }
+    
+    func didDeleteHabit(_ habit: Habit) {
+        // Удаляем привычку из массива
+        habits.removeAll(where: { $0.id == habit.id })
+        // Определяем индекс секции, которую нужно обновить
+        let sectionIndex = 0 // привычки в первой секции
+        let indexSet = IndexSet(integer: sectionIndex)
+
+       // Обновляем данные только этой секции
+       tableView.reloadSections(indexSet, with: .automatic)
+    }
 }
 
 //MARK: - dateProcessingForHabitsDelegate
 extension MainViewController: DateProcessingForHabitsDelegate {
     // Функция для фильтрации задач по дате
-    func habits(for date: Date) -> [Habit] {
+    func filteredOnDay(_ habits: [Habit], for date: Date) -> [Habit] {
         return habits.filter { $0.isHabitDue(on: date) }
     }
     
     // Функция для фильтрации задач по дню недели
-    func habits(forWeekDay date: Date) -> [Habit] {
+    func filteredOnWeekDay(_ habits: [Habit], for date: Date) -> [Habit] {
         return habits.filter { $0.isWithinPeriod(on: date)}
     }
+    
+    func setCurrentDateLabel(on date: Date) {
+        currentDateForLabel = date.formatted(date: .abbreviated, time: .omitted)
+        currentDateLabel.text = currentDateForLabel
+    }
 }
-
-
-
-    //полезный код для сравнения двух дат по дню
-//    let selectedDate = Calendar.current.startOfDay(for: Date())
-//    let currentDate = Calendar.current.startOfDay(for: Date())
-//    
-//    if Calendar.current.isDate(selectedDate, inSameDayAs: currentDate) {
-//        print("Dates are the same.")
-//    } else {
-//        print("Dates are different.")
-//    }
-

@@ -12,16 +12,11 @@ class HabitViewCell: UITableViewCell {
     @IBOutlet var habitLabel: UILabel!
     @IBOutlet var leftTimesADayLabel: UILabel!
     @IBOutlet var progress: UIProgressView!
-
     @IBOutlet var leftDaysLabel: UILabel!
     @IBOutlet var percentLabel: UILabel!
-    
-//    private let containerView = UIView()
+
     @IBOutlet var containerForHabitCellsView: UIView!
     
-    
-
-
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupShadow()
@@ -42,8 +37,6 @@ class HabitViewCell: UITableViewCell {
         contentView.layer.masksToBounds = true
         
         setupShadow()
-
-        // Initialization code
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

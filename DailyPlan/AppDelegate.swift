@@ -10,22 +10,42 @@ import UIKit
 @main
   class AppDelegate: UIResponder, UIApplicationDelegate {
 
-      var delegate: completionHistoryDelegate?
-      
-      
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
-        delegate = StorageManager.shared
+var window: UIWindow?
+    var delegate: completionHistoryDelegate?
+    var completionHistoryDelegate: completionHistoryDelegate?
+
+      func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+          
+      window = UIWindow(frame: UIScreen.main.bounds)
+      let storyboard = UIStoryboard(name: "Main", bundle: nil)
+          
+      // Инициализируем UINavigationController из Storyboard
+      if let navigationController = storyboard.instantiateInitialViewController() as? UINavigationController {
+          window?.rootViewController = navigationController
+          window?.makeKeyAndVisible()
+              
+              // Доступ к MainViewController, если он установлен как rootViewController в UINavigationController
+              if let mainVC = navigationController.viewControllers.first as? MainViewController {
+                          
+              // Устанавливаем делегаты для методов фильтрации
+              StorageManager.shared.delegate = mainVC
+              completionHistoryDelegate = StorageManager.shared
+                        
+              if isFirstOpenToday() {
+                  print("Это первое открытие приложения за сегодня")
+                      completionHistoryDelegate?.checkAndCancelYesterdayCompletionHistory()
+                      completionHistoryDelegate?.createTodayCompletionHistory()
+              } else {
+                  print("Приложение уже открывалось сегодня")
+              }
+              } else {
+                  print("Не удалось найти MainViewController")
+              }
+      }
+          
+      return true
+  }
         
-        if isFirstOpenToday() {
-            print("Это первое открытие приложения за сегодня")
-            delegate?.checkAndCancelYesterdayCompletionHistory()
-            delegate?.createTodayCompletionHistory()
-        } else {
-            print("Приложение уже открывалось сегодня")
-        }
-        return true
-    }
 
     // MARK: UISceneSession Lifecycle
 
@@ -50,8 +70,8 @@ extension AppDelegate {
         let today = Calendar.current.startOfDay(for: Date())
         
         // Получаем дату последнего открытия из UserDefaults
-        let lastOpenDate = UserDefaults.standard.object(forKey: "lastOpenDate") as? Date
-        
+//        let lastOpenDate = UserDefaults.standard.object(forKey: "lastOpenDate") as? Date
+        let lastOpenDate = Date() - 1 // для отладки
         // Проверяем, была ли дата последнего открытия сегодня
         if lastOpenDate == today {
             return false // Сегодня уже открывали

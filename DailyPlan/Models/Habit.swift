@@ -41,9 +41,6 @@ struct Habit: Codable {
     //TODO: дописать id
     let id: Int
     
-//    private var defaults = UserDefaults.standard
-//    private let habitsKey = "habits"
-    
     static func getExampleHabitsList() -> [Habit] {
         [
             Habit(
@@ -107,8 +104,6 @@ struct Habit: Codable {
                 id: 3
             )
         ]
-        
-        
     }
     
     private func addHabit() {}
@@ -124,7 +119,8 @@ struct Habit: Codable {
     // Проверка, подходит ли дата по дню недели
     func isWithinPeriod(on date: Date) -> Bool {
     // Получаем текущий день недели (1 - воскресенье, 2 - понедельник, ..., 7 - суббота)
-    let todayIndex = Calendar.current.component(.weekday, from: Date()) - 1
+    let todayIndex = Calendar.current.component(.weekday, from: date) - 1
+        print("todayIndex = ", todayIndex, "daysOfWeek[todayIndex] = ", daysOfWeek[todayIndex])
     // Проверяем, стоит ли флаг на текущий день недели
     return daysOfWeek[todayIndex]
     }
@@ -213,3 +209,4 @@ struct HabitCompletionRecord: Codable {
     let timesDone: Int
     let status: HabitStatus
 }
+

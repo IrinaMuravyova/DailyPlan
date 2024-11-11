@@ -71,7 +71,6 @@ class StorageManager {
     
     
     func updateHabit(with habitID: Int) {
-        
     }
     
 }
@@ -80,18 +79,50 @@ extension StorageManager: completionHistoryDelegate {
     func createTodayCompletionHistory() {
         
         var habits = fetchHabits()
-        let today = Calendar.current.startOfDay(for: Date())
-        habits = delegate?.habits(for: today) ?? [] //TODO: обработать ошибку
-        habits = delegate?.habits(forWeekDay: today) ?? []
-       
+        let todaySystemDate = Date()
+        print("ДО ФИЛЬТРАЦИИ")
+        print(habits.count)
+//        print(habits)
+        habits = delegate?.filteredOnDay(habits, for: todaySystemDate) ?? [] //TODO: обработать ошибку
+        print("ПОСЛЕ ФИЛЬТРАЦИИ ПО ДАТЕ")
+        print(habits.count)
+        habits = delegate?.filteredOnWeekDay(habits, for: todaySystemDate) ?? []
+        print("ПОСЛЕ ФИЛЬТРАЦИИ ПО ДНЮ НЕДЕЛИ")
+        print(habits.count)
+        
         for i in 0 ..< habits.count {
-            habits[i].completionHistory.append(HabitCompletionRecord(date: today, timesDone: 0, status: .created))
-            save(changedHabit: habits[i])
+            
+            if habits[i].completionHistory.filter({
+                isSameDateWithoutTime($0.date, todaySystemDate)
+            }).count == 0 {
+                habits[i].completionHistory.append(HabitCompletionRecord(date: todaySystemDate, timesDone: 0, status: .created))
+                save(changedHabit: habits[i])
+            } else {
+                print("запись \(habits[i].completionHistory) уже существует") //TODO: обработать ошибку
+            }
         }
     }
     
     //TODO: если есть за вчера записи в статусе не .complited, то за вчера пометить их как невыполненные
     func checkAndCancelYesterdayCompletionHistory() {
         // получается что проверяю в mainVC, а перезаписываю в памяти здесь
+    }
+    
+    func isSameDay(_ dateFirst: Date, _ dateSecond: Date) -> Bool {
+        Calendar.current.component(.day, from: dateFirst) == Calendar.current.component(.day, from: dateSecond)
+    }
+    
+    func isSameMonth(_ dateFirst: Date, _ dateSecond: Date) -> Bool {
+        Calendar.current.component(.month, from: dateFirst) == Calendar.current.component(.month, from: dateSecond)
+    }
+    
+    func isSameYear(_ dateFirst: Date, _ dateSecond: Date) -> Bool {
+        Calendar.current.component(.year, from: dateFirst) == Calendar.current.component(.year, from: dateSecond)
+    }
+    
+    func isSameDateWithoutTime(_ dateFirst: Date, _ dateSecond: Date) -> Bool {
+        isSameDay(dateFirst, dateSecond)
+        && isSameMonth(dateFirst, dateSecond)
+        && isSameYear(dateFirst, dateSecond)
     }
 }
